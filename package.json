@@ -8,7 +8,7 @@
     "vercel-build": "cd client && npm install && npm run build"
   },
   "dependencies": {
-    "@vercel/postgres": "^0.5.1",
+    "postgres": "^3.4.3",
     "bcryptjs": "^2.4.3",
     "googleapis": "^133.0.0",
     "jsonwebtoken": "^9.0.0"

@@ -1,4 +1,4 @@
-const { sql } = require('@vercel/postgres');
+const { sql } = require('../_lib/db');
 const { getAllApplications, updateApplicationField } = require('../_lib/googleSheets');
 const { authenticateToken } = require('../_lib/auth');
 

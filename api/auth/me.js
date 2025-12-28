@@ -1,4 +1,4 @@
-const { sql } = require('@vercel/postgres');
+const { sql } = require('../_lib/db');
 const { authenticateToken } = require('../_lib/auth');
 
 module.exports = async (req, res) => {
