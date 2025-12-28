@@ -12,16 +12,21 @@ module.exports = async (req, res) => {
     'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
   );
 
+  // Handle preflight
   if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
+    return res.status(200).end();
   }
 
+  // Only allow POST
   if (req.method !== 'POST') {
+    console.log('Method not allowed:', req.method);
     return res.status(405).json({ error: `Method ${req.method} not allowed` });
   }
 
   try {
+    // Log for debugging
+    console.log('Login attempt - body:', req.body);
+    
     const { username, password } = req.body;
 
     if (!username || !password) {
@@ -45,7 +50,7 @@ module.exports = async (req, res) => {
 
     const token = generateToken(user);
 
-    res.status(200).json({
+    return res.status(200).json({
       token,
       user: {
         id: user.id,
@@ -55,6 +60,6 @@ module.exports = async (req, res) => {
     });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ error: 'Server error', details: error.message });
+    return res.status(500).json({ error: 'Server error', details: error.message });
   }
 };
