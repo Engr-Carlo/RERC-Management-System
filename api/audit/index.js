@@ -1,5 +1,5 @@
 const { sql } = require('@vercel/postgres');
-const { authenticateToken, requireAdmin } = require('../../lib/auth');
+const { authenticateToken, requireAdmin } = require('../_lib/auth');
 
 module.exports = async (req, res) => {
   // Handle CORS

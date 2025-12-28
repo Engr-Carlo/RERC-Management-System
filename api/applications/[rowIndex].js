@@ -1,6 +1,6 @@
 const { sql } = require('@vercel/postgres');
-const { getAllApplications, updateApplicationField } = require('../../lib/googleSheets');
-const { authenticateToken } = require('../../lib/auth');
+const { getAllApplications, updateApplicationField } = require('../_lib/googleSheets');
+const { authenticateToken } = require('../_lib/auth');
 
 module.exports = async (req, res) => {
   // Handle CORS

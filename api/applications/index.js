@@ -1,5 +1,5 @@
-const { getAllApplications } = require('../../lib/googleSheets');
-const { authenticateToken } = require('../../lib/auth');
+const { getAllApplications } = require('../_lib/googleSheets');
+const { authenticateToken } = require('../_lib/auth');
 
 module.exports = async (req, res) => {
   // Handle CORS

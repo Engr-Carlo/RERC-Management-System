@@ -1,6 +1,6 @@
 const { sql } = require('@vercel/postgres');
 const bcrypt = require('bcryptjs');
-const { authenticateToken } = require('../../lib/auth');
+const { authenticateToken } = require('../_lib/auth');
 
 module.exports = async (req, res) => {
   // Handle CORS
