@@ -1,6 +1,7 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+// Use relative path for Vercel deployment
+const API_URL = '/api';
 
 // Get token from localStorage
 const getToken = () => localStorage.getItem('token');
@@ -58,17 +59,17 @@ export const applicationService = {
   },
 
   getById: async (rowIndex) => {
-    const response = await api.get(`/applications/${rowIndex}`);
+    const response = await api.get(`/applications/${rowIndex}?rowIndex=${rowIndex}`);
     return response.data;
   },
 
   update: async (rowIndex, fieldName, value) => {
-    const response = await api.patch(`/applications/${rowIndex}`, { fieldName, value });
+    const response = await api.patch(`/applications/${rowIndex}?rowIndex=${rowIndex}`, { fieldName, value });
     return response.data;
   },
 
   getHistory: async (rowIndex) => {
-    const response = await api.get(`/applications/${rowIndex}/history`);
+    const response = await api.get(`/applications/history/${rowIndex}?rowIndex=${rowIndex}`);
     return response.data;
   }
 };
@@ -94,7 +95,7 @@ export const userService = {
   },
 
   delete: async (userId) => {
-    const response = await api.delete(`/users/${userId}`);
+    const response = await api.delete(`/users/${userId}?id=${userId}`);
     return response.data;
   },
 

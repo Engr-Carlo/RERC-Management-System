@@ -1,0 +1,16 @@
+{
+  "name": "rerc-management-system",
+  "version": "1.0.0",
+  "description": "RERC Committee Management System",
+  "scripts": {
+    "build": "cd client && npm install && npm run build && cd .. && xcopy /E /I /Y client\\build build",
+    "dev": "cd client && npm start",
+    "vercel-build": "cd client && npm install && npm run build"
+  },
+  "dependencies": {
+    "@vercel/postgres": "^0.5.1",
+    "bcryptjs": "^2.4.3",
+    "googleapis": "^133.0.0",
+    "jsonwebtoken": "^9.0.0"
+  }
+}
