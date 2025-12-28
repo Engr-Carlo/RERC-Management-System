@@ -1,4 +1,4 @@
-const { sql } = require('../config/db');
+const { sql } = require('@vercel/postgres');
 const bcrypt = require('bcryptjs');
 const { generateToken } = require('../lib/auth');
 
@@ -18,7 +18,7 @@ module.exports = async (req, res) => {
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ error: `Method ${req.method} not allowed` });
   }
 
   try {
@@ -55,6 +55,6 @@ module.exports = async (req, res) => {
     });
   } catch (error) {
     console.error('Login error:', error);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Server error', details: error.message });
   }
 };
