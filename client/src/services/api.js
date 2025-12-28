@@ -1,0 +1,107 @@
+import axios from 'axios';
+
+const API_URL = 'http://localhost:5000/api';
+
+// Get token from localStorage
+const getToken = () => localStorage.getItem('token');
+
+// Set up axios defaults
+const api = axios.create({
+  baseURL: API_URL,
+});
+
+// Add token to requests
+api.interceptors.request.use((config) => {
+  const token = getToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// Auth services
+export const authService = {
+  login: async (username, password) => {
+    const response = await api.post('/auth/login', { username, password });
+    if (response.data.token) {
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+    }
+    return response.data;
+  },
+
+  logout: () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+  },
+
+  getCurrentUser: () => {
+    const userStr = localStorage.getItem('user');
+    return userStr ? JSON.parse(userStr) : null;
+  },
+
+  isAuthenticated: () => {
+    return !!getToken();
+  },
+
+  getMe: async () => {
+    const response = await api.get('/auth/me');
+    return response.data;
+  }
+};
+
+// Application services
+export const applicationService = {
+  getAll: async () => {
+    const response = await api.get('/applications');
+    return response.data;
+  },
+
+  getById: async (rowIndex) => {
+    const response = await api.get(`/applications/${rowIndex}`);
+    return response.data;
+  },
+
+  update: async (rowIndex, fieldName, value) => {
+    const response = await api.patch(`/applications/${rowIndex}`, { fieldName, value });
+    return response.data;
+  },
+
+  getHistory: async (rowIndex) => {
+    const response = await api.get(`/applications/${rowIndex}/history`);
+    return response.data;
+  }
+};
+
+// Audit services
+export const auditService = {
+  getAll: async (limit = 100) => {
+    const response = await api.get(`/audit?limit=${limit}`);
+    return response.data;
+  }
+};
+
+// User services
+export const userService = {
+  getAll: async () => {
+    const response = await api.get('/users');
+    return response.data;
+  },
+
+  create: async (username, password, role) => {
+    const response = await api.post('/users', { username, password, role });
+    return response.data;
+  },
+
+  delete: async (userId) => {
+    const response = await api.delete(`/users/${userId}`);
+    return response.data;
+  },
+
+  changePassword: async (newPassword) => {
+    const response = await api.put('/users/change-password', { newPassword });
+    return response.data;
+  }
+};
+
+export default api;
