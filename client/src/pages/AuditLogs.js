@@ -16,6 +16,7 @@ const AuditLogs = () => {
 
   useEffect(() => {
     filterLogs();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, actionFilter, logs]);
 
   const fetchLogs = async () => {

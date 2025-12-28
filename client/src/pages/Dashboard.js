@@ -19,6 +19,7 @@ const Dashboard = () => {
 
   useEffect(() => {
     filterApplications();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, statusFilter, applications]);
 
   const fetchApplications = async () => {

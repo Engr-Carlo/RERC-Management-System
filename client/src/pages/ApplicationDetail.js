@@ -19,6 +19,7 @@ const ApplicationDetail = () => {
   useEffect(() => {
     fetchApplication();
     fetchHistory();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rowIndex]);
 
   const fetchApplication = async () => {
