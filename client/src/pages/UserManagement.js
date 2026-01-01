@@ -71,9 +71,9 @@ const UserManagement = () => {
     }
 
     try {
-      await userService.create(newUser.username, newUser.password, newUser.role);
+      await userService.create(newUser.username, newUser.password, newUser.email, newUser.role);
       setShowAddModal(false);
-      setNewUser({ username: '', password: '', role: 'reviewer' });
+      setNewUser({ username: '', password: '', email: '', role: 'reviewer' });
       fetchUsers();
       alert('User created successfully!');
     } catch (err) {

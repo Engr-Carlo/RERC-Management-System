@@ -89,8 +89,8 @@ export const userService = {
     return response.data;
   },
 
-  create: async (username, password, role) => {
-    const response = await api.post('/users', { username, password, role });
+  create: async (username, password, email, role) => {
+    const response = await api.post('/users', { username, password, email, role });
     return response.data;
   },
 
