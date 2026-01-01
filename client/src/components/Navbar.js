@@ -16,6 +16,7 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="navbar-container">
         <div className="navbar-brand">
+          <img src="/logo.svg" alt="RERC Logo" className="navbar-logo" />
           <h2>RERC Committee Portal</h2>
         </div>
         
@@ -41,6 +42,9 @@ const Navbar = () => {
             <span className="user-name">{user?.username}</span>
             <span className="user-role">{user?.role}</span>
           </span>
+          <button className="nav-button" onClick={() => navigate('/profile')}>
+            Profile
+          </button>
           <button className="logout-button" onClick={handleLogout}>
             Logout
           </button>

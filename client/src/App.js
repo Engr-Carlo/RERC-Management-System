@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import ApplicationDetail from './pages/ApplicationDetail';
 import AuditLogs from './pages/AuditLogs';
 import UserManagement from './pages/UserManagement';
+import Profile from './pages/Profile';
 import ProtectedRoute from './components/ProtectedRoute';
 import { authService } from './services/api';
 
@@ -42,6 +43,14 @@ function App() {
           element={
             <ProtectedRoute adminOnly={true}>
               <UserManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
             </ProtectedRoute>
           }
         />

@@ -107,8 +107,13 @@ export const userService = {
     return response.data;
   },
 
-  changePassword: async (newPassword) => {
-    const response = await api.put('/users', { newPassword });
+  changePassword: async (currentPassword, newPassword) => {
+    const response = await api.put('/users?action=changePassword', { currentPassword, newPassword });
+    return response.data;
+  },
+
+  resetPassword: async () => {
+    const response = await api.put('/users?action=resetPassword');
     return response.data;
   }
 };

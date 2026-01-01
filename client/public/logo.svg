@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Background Circle -->
+  <circle cx="100" cy="100" r="95" fill="#4CAF50" stroke="#2E7D32" stroke-width="3"/>
+  
+  <!-- Shield Shape (representing ethics/protection) -->
+  <path d="M100 40 L140 55 L140 90 Q140 120 100 145 Q60 120 60 90 L60 55 Z" 
+        fill="white" stroke="#2E7D32" stroke-width="2"/>
+  
+  <!-- Document/Paper Icon Inside Shield -->
+  <rect x="85" y="65" width="30" height="40" rx="2" fill="#4CAF50"/>
+  <line x1="90" y1="75" x2="110" y2="75" stroke="white" stroke-width="2"/>
+  <line x1="90" y1="82" x2="110" y2="82" stroke="white" stroke-width="2"/>
+  <line x1="90" y1="89" x2="110" y2="89" stroke="white" stroke-width="2"/>
+  <line x1="90" y1="96" x2="105" y2="96" stroke="white" stroke-width="2"/>
+  
+  <!-- Checkmark -->
+  <path d="M92 88 L97 93 L108 75" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- Text RERC -->
+  <text x="100" y="170" font-family="Arial, sans-serif" font-size="28" font-weight="bold" 
+        fill="white" text-anchor="middle">RERC</text>
+</svg>
