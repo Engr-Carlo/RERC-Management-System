@@ -1,5 +1,5 @@
 const { sql } = require('../_lib/db');
-const { getAllApplications, updateApplicationField } = require('../_lib/googleSheets');
+const { getAllApplications, updateApplicationField, updateRowColor } = require('../_lib/googleSheets');
 const { authenticateToken } = require('../_lib/auth');
 
 module.exports = async (req, res) => {
@@ -65,6 +65,11 @@ module.exports = async (req, res) => {
       
       // Update Google Sheet
       await updateApplicationField(req.query.rowIndex, fieldName, value);
+      
+      // If updating Remarks field with status, also update row color
+      if (fieldName === 'Remarks' && (value === 'For Resubmission' || value === 'Approved')) {
+        await updateRowColor(req.query.rowIndex, value);
+      }
 
       // Log the change
       await sql`

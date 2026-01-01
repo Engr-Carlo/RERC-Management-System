@@ -129,4 +129,73 @@ function numberToColumnLetter(num) {
   return letter;
 }
 
-module.exports = { getAllApplications, updateApplicationField };
+async function updateRowColor(rowIndex, status) {
+  const sheets = await initializeGoogleSheets();
+  if (!sheets) {
+    throw new Error('Google Sheets not initialized');
+  }
+
+  const spreadsheetId = process.env.SPREADSHEET_ID;
+  const sheetName = process.env.SHEET_NAME || 'Form Responses 1';
+
+  try {
+    // Get the sheet ID
+    const spreadsheet = await sheets.spreadsheets.get({
+      spreadsheetId,
+    });
+    
+    const sheet = spreadsheet.data.sheets.find(
+      s => s.properties.title === sheetName
+    );
+    
+    if (!sheet) {
+      throw new Error(`Sheet "${sheetName}" not found`);
+    }
+    
+    const sheetId = sheet.properties.sheetId;
+    
+    // Define colors based on status
+    let color;
+    if (status === 'For Resubmission') {
+      // Green
+      color = { red: 0.7, green: 1, blue: 0.7 };
+    } else if (status === 'Approved') {
+      // Blue
+      color = { red: 0.7, green: 0.85, blue: 1 };
+    } else {
+      // Default white
+      color = { red: 1, green: 1, blue: 1 };
+    }
+    
+    // Update row color using batchUpdate
+    await sheets.spreadsheets.batchUpdate({
+      spreadsheetId,
+      requestBody: {
+        requests: [
+          {
+            repeatCell: {
+              range: {
+                sheetId: sheetId,
+                startRowIndex: rowIndex - 1,
+                endRowIndex: rowIndex,
+              },
+              cell: {
+                userEnteredFormat: {
+                  backgroundColor: color,
+                },
+              },
+              fields: 'userEnteredFormat.backgroundColor',
+            },
+          },
+        ],
+      },
+    });
+    
+    return true;
+  } catch (error) {
+    console.error('Error updating row color:', error);
+    throw error;
+  }
+}
+
+module.exports = { getAllApplications, updateApplicationField, updateRowColor };

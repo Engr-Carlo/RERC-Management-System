@@ -121,13 +121,11 @@ const ApplicationDetail = () => {
     try {
       setUpdating(true);
       
-      // Append new comment to existing comments
+      // Append new comment to existing comments (clean version for Google Sheet)
       const existingComments = application['COMMENTS'] || '';
-      const timestamp = new Date().toLocaleString();
-      const user = JSON.parse(localStorage.getItem('user'));
       const updatedComments = existingComments 
-        ? `${existingComments}\n\n[${timestamp} - ${user.username}]: ${newComment}`
-        : `[${timestamp} - ${user.username}]: ${newComment}`;
+        ? `${existingComments}\n\n${newComment}`
+        : newComment;
       
       await applicationService.update(rowIndex, 'COMMENTS', updatedComments);
       
