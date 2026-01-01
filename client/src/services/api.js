@@ -59,17 +59,17 @@ export const applicationService = {
   },
 
   getById: async (rowIndex) => {
-    const response = await api.get(`/applications/${rowIndex}?rowIndex=${rowIndex}`);
+    const response = await api.get(`/applications?rowIndex=${rowIndex}`);
     return response.data;
   },
 
   update: async (rowIndex, fieldName, value) => {
-    const response = await api.patch(`/applications/${rowIndex}?rowIndex=${rowIndex}`, { fieldName, value });
+    const response = await api.patch(`/applications?rowIndex=${rowIndex}`, { fieldName, value });
     return response.data;
   },
 
   getHistory: async (rowIndex) => {
-    const response = await api.get(`/applications/history/${rowIndex}?rowIndex=${rowIndex}`);
+    const response = await api.get(`/applications?history=true&rowIndex=${rowIndex}`);
     return response.data;
   }
 };
