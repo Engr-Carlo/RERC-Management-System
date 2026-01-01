@@ -50,9 +50,21 @@ const Dashboard = () => {
 
     // Filter by status
     if (statusFilter !== 'all') {
-      filtered = filtered.filter(app =>
-        app['Research Ethics Clearance Application Status']?.toLowerCase() === statusFilter.toLowerCase()
-      );
+      filtered = filtered.filter(app => {
+        const status = app['Research Ethics Clearance Application Status'] || '';
+        const statusLower = status.toLowerCase();
+        
+        // Map filter values to actual Google Sheet status values
+        if (statusFilter === 'pending') {
+          return statusLower.includes('pending') || status === '';
+        } else if (statusFilter === 'approved') {
+          return statusLower.includes('completed');
+        } else if (statusFilter === 'needs revision') {
+          return statusLower.includes('review results forwarded via email');
+        }
+        
+        return false;
+      });
     }
 
     setFilteredApplications(filtered);
@@ -122,7 +134,6 @@ const Dashboard = () => {
               <option value="pending">Pending</option>
               <option value="all">All</option>
               <option value="approved">Approved</option>
-              <option value="rejected">Rejected</option>
               <option value="needs revision">Needs Revision</option>
             </select>
           </div>

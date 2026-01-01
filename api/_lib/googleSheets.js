@@ -157,17 +157,17 @@ async function updateRowColor(rowIndex, status) {
     // Define colors based on status/action
     let color;
     if (status === 'For Resubmission') {
-      // Green (reviewer)
-      color = { red: 0.7, green: 1, blue: 0.7 };
+      // Dark green 2 (reviewer)
+      color = { red: 0.42, green: 0.66, blue: 0.31 };
     } else if (status === 'Approved') {
-      // Blue (reviewer)
-      color = { red: 0.7, green: 0.85, blue: 1 };
+      // Dark blue 2 (reviewer)
+      color = { red: 0.26, green: 0.52, blue: 0.96 };
     } else if (status === 'resubmission') {
-      // Orange (RERC Head)
-      color = { red: 1, green: 0.8, blue: 0.6 };
+      // #fbbc04 (RERC Head)
+      color = { red: 0.98, green: 0.74, blue: 0.02 };
     } else if (status === 'approved') {
-      // Red (RERC Head)
-      color = { red: 1, green: 0.7, blue: 0.7 };
+      // #ea4335 (RERC Head)
+      color = { red: 0.92, green: 0.26, blue: 0.21 };
     } else {
       // Default white
       color = { red: 1, green: 1, blue: 1 };
