@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import ApplicationDetail from './pages/ApplicationDetail';
@@ -59,7 +60,7 @@ function App() {
           element={
             authService.isAuthenticated() 
               ? <Navigate to="/dashboard" /> 
-              : <Navigate to="/login" />
+              : <LandingPage />
           } 
         />
       </Routes>
