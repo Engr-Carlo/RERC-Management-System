@@ -10,7 +10,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('pending');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -119,9 +119,9 @@ const Dashboard = () => {
           <div className="filter-group">
             <label>Status:</label>
             <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+              <option value="pending">Pending</option>
               <option value="all">All</option>
               <option value="approved">Approved</option>
-              <option value="pending">Pending</option>
               <option value="rejected">Rejected</option>
               <option value="needs revision">Needs Revision</option>
             </select>
