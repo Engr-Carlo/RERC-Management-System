@@ -32,11 +32,11 @@ function App() {
         />
         <Route
           path="/audit-logs"
-          element={{
+          element={
             <ProtectedRoute>
               <AuditLogs />
             </ProtectedRoute>
-          }}
+          }
         />
         <Route
           path="/users"
