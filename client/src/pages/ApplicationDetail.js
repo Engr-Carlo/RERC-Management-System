@@ -275,6 +275,10 @@ const ApplicationDetail = () => {
             <h2>Research Details</h2>
             <div className="field-grid">
               <div className="field-item full-width">
+                <label>Submission Date:</label>
+                {renderFieldValue('Date', application['Date'])}
+              </div>
+              <div className="field-item full-width">
                 <label>RERC Code:</label>
                 {renderFieldValue('RERC Code for Revised Submission (Please specify the code assigned by the RERC Committee through your research college representative or research teacher for streamlined tracking of your submission); for New application, write NA', 
                   application['RERC Code for Revised Submission (Please specify the code assigned by the RERC Committee through your research college representative or research teacher for streamlined tracking of your submission); for New application, write NA'])}
@@ -291,20 +295,20 @@ const ApplicationDetail = () => {
           </div>
 
           <div className="detail-card">
-            <h2>Submitted Documents</h2>
+            <h2>Documents</h2>
             <div className="field-grid">
               <div className="field-item full-width">
-                <label>PNC:PRE-FO-49 Research Ethics Application Form:</label>
+                <label>Research Ethics Application Form (PNC:PRE-FO-49):</label>
                 {renderFieldValue('Attach DULY ACCOMPLISHED AND SIGNED PNC:PRE-FO-49 Research Ethics Application Form ', 
                   application['Attach DULY ACCOMPLISHED AND SIGNED PNC:PRE-FO-49 Research Ethics Application Form '])}
               </div>
               <div className="field-item full-width">
-                <label>PNC PRE-FO-50 Informed Consent Form:</label>
+                <label>Informed Consent Form (PNC PRE-FO-50):</label>
                 {renderFieldValue('Attach DULY ACCOMPLISHED AND SIGNED PNC PRE-FO-50 Informed Consent Form', 
                   application['Attach DULY ACCOMPLISHED AND SIGNED PNC PRE-FO-50 Informed Consent Form'])}
               </div>
               <div className="field-item full-width">
-                <label>PNC PRE-FO-51 Parental Consent Form:</label>
+                <label>Parental Consent Form (PNC PRE-FO-51):</label>
                 {renderFieldValue('Attach DULY ACCOMPLISHED AND SIGNED PNC PRE-FO-51 Parental Consent Form for Research Undertaking (For research involving minor participants (below 18 years old))', 
                   application['Attach DULY ACCOMPLISHED AND SIGNED PNC PRE-FO-51 Parental Consent Form for Research Undertaking (For research involving minor participants (below 18 years old))'])}
               </div>
@@ -321,13 +325,17 @@ const ApplicationDetail = () => {
             </div>
           </div>
 
-          <div className="detail-card status-card">
-            <h2>Status & Comments</h2>
+          <div className="detail-card">
+            <h2>Application Status</h2>
             <div className="field-grid">
               <div className="field-item full-width">
-                <label>Application Status:</label>
+                <label>Status:</label>
                 {renderFieldValue('Research Ethics Clearance Application Status', 
                   application['Research Ethics Clearance Application Status'])}
+              </div>
+              <div className="field-item full-width">
+                <label>Remarks:</label>
+                {renderFieldValue('Remarks', application['Remarks'])}
               </div>
               <div className="field-item full-width">
                 <label>Comments:</label>
