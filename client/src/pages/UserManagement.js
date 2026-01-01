@@ -200,8 +200,8 @@ const UserManagement = () => {
                   <td>
                     {user.username}
                     {user.id === currentUser.id && <span className="current-user-badge">You</span>}
-                  </td{user.email || 'N/A'}</td>
-                  <td>>
+                  </td>
+                  <td>{user.email || 'N/A'}</td>
                   <td>
                     <span className={`role-badge role-${user.role}`}>
                       {user.role}
