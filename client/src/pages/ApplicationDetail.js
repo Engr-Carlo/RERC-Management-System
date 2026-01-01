@@ -301,20 +301,45 @@ const ApplicationDetail = () => {
           </button>
           <h1>Application Details</h1>
           <div className="header-actions">
-            <button 
-              onClick={() => handleStatusUpdate('For Resubmission')} 
-              className="status-button status-resubmission"
-              disabled={updating}
-            >
-              For Resubmission
-            </button>
-            <button 
-              onClick={() => handleStatusUpdate('Approved')} 
-              className="status-button status-approved"
-              disabled={updating}
-            >
-              Approved
-            </button>
+            {JSON.parse(localStorage.getItem('user'))?.role === 'rerc_head' ? (
+              // RERC Head buttons
+              <>
+                <button 
+                  onClick={() => handleRERCHeadStatusUpdate('resubmission')} 
+                  className="status-button"
+                  style={{ backgroundColor: '#ff9800', color: 'white' }}
+                  disabled={updating}
+                >
+                  For Resubmission
+                </button>
+                <button 
+                  onClick={() => handleRERCHeadStatusUpdate('approved')} 
+                  className="status-button"
+                  style={{ backgroundColor: '#f44336', color: 'white' }}
+                  disabled={updating}
+                >
+                  Approved
+                </button>
+              </>
+            ) : (
+              // Reviewer buttons
+              <>
+                <button 
+                  onClick={() => handleStatusUpdate('For Resubmission')} 
+                  className="status-button status-resubmission"
+                  disabled={updating}
+                >
+                  For Resubmission
+                </button>
+                <button 
+                  onClick={() => handleStatusUpdate('Approved')} 
+                  className="status-button status-approved"
+                  disabled={updating}
+                >
+                  Approved
+                </button>
+              </>
+            )}
             <button onClick={() => setShowHistory(!showHistory)} className="history-toggle-button">
               {showHistory ? 'Hide History' : 'Show History'}
             </button>
