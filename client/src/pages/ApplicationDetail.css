@@ -17,6 +17,51 @@
   color: var(--text-primary);
   font-size: 2rem;
   font-weight: 600;
+  flex: 1;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.status-button {
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.status-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.status-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.status-resubmission {
+  background: #f44336;
+}
+
+.status-resubmission:hover:not(:disabled) {
+  background: #d32f2f;
+}
+
+.status-approved {
+  background: #4caf50;
+}
+
+.status-approved:hover:not(:disabled) {
+  background: #388e3c;
 }
 
 .back-button {

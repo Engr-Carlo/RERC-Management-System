@@ -80,6 +80,33 @@ const ApplicationDetail = () => {
     }
   };
 
+  const handleStatusUpdate = async (status) => {
+    if (!window.confirm(`Are you sure you want to mark this application as "${status}"?`)) {
+      return;
+    }
+
+    try {
+      setUpdating(true);
+      await applicationService.update(rowIndex, 'Remarks', status);
+      
+      // Update local state
+      setApplication({
+        ...application,
+        'Remarks': status
+      });
+      
+      // Refresh history
+      fetchHistory();
+      
+      alert(`Application status updated to: ${status}`);
+    } catch (err) {
+      alert('Failed to update status. Please try again.');
+      console.error(err);
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   const isDocumentField = (fieldName) => {
     return fieldName.toLowerCase().includes('attach') || 
            fieldName.toLowerCase().includes('proof of payment');
@@ -190,9 +217,25 @@ const ApplicationDetail = () => {
             ← Back to Dashboard
           </button>
           <h1>Application Details</h1>
-          <button onClick={() => setShowHistory(!showHistory)} className="history-toggle-button">
-            {showHistory ? 'Hide History' : 'Show History'}
-          </button>
+          <div className="header-actions">
+            <button 
+              onClick={() => handleStatusUpdate('For Resubmission')} 
+              className="status-button status-resubmission"
+              disabled={updating}
+            >
+              For Resubmission
+            </button>
+            <button 
+              onClick={() => handleStatusUpdate('Approved')} 
+              className="status-button status-approved"
+              disabled={updating}
+            >
+              Approved
+            </button>
+            <button onClick={() => setShowHistory(!showHistory)} className="history-toggle-button">
+              {showHistory ? 'Hide History' : 'Show History'}
+            </button>
+          </div>
         </div>
 
         <div className="detail-content">
