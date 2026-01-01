@@ -248,7 +248,7 @@ const ApplicationDetail = () => {
                   application['Name of Lead Researcher (First Name Middle Initial. Last Name) '])}
               </div>
               <div className="field-item">
-                <label>Email Address:</label>
+                <label>Student Email:</label>
                 {renderFieldValue('Active Email Address', application['Active Email Address'])}
               </div>
               <div className="field-item full-width">
@@ -267,6 +267,10 @@ const ApplicationDetail = () => {
               <div className="field-item">
                 <label>Research Adviser:</label>
                 {renderFieldValue('Name of Research Adviser', application['Name of Research Adviser'])}
+              </div>
+              <div className="field-item">
+                <label>Adviser Email:</label>
+                {renderFieldValue('Email Address', application['Email Address'])}
               </div>
             </div>
           </div>
@@ -332,10 +336,6 @@ const ApplicationDetail = () => {
                 <label>Status:</label>
                 {renderFieldValue('Research Ethics Clearance Application Status', 
                   application['Research Ethics Clearance Application Status'])}
-              </div>
-              <div className="field-item full-width">
-                <label>Remarks:</label>
-                {renderFieldValue('Remarks', application['Remarks'])}
               </div>
               <div className="field-item full-width">
                 <label>Comments:</label>
