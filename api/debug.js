@@ -21,7 +21,7 @@ module.exports = async (req, res) => {
     try {
       const result = await sql`SELECT * FROM users LIMIT 5`;
       debug.database = 'connected';
-      debug.users = result.rows.map(u => ({ 
+      debug.users = result.map(u => ({ 
         id: u.id, 
         username: u.username, 
         role: u.role,
@@ -30,6 +30,7 @@ module.exports = async (req, res) => {
     } catch (dbError) {
       debug.database = 'error';
       debug.error = dbError.message;
+      debug.errorStack = dbError.stack;
     }
 
     return res.status(200).json(debug);
