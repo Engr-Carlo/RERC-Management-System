@@ -4,7 +4,7 @@ import { authService } from '../services/api';
 import './Login.css';
 
 const Login = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -16,7 +16,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await authService.login(username, password);
+      await authService.login(email, password);
       navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed. Please try again.');
@@ -37,13 +37,13 @@ const Login = () => {
           {error && <div className="error-message">{error}</div>}
 
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="email">Email</label>
             <input
-              id="username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              placeholder="Enter your username"
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
               required
               autoFocus
             />
@@ -67,7 +67,7 @@ const Login = () => {
         </form>
 
         <div className="login-footer">
-          <p>Default credentials: admin / admin123</p>
+          <p>For existing users: Use your username or email to login</p>
           <p className="warning">Note: Change password after first login</p>
         </div>
       </div>

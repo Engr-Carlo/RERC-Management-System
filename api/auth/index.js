@@ -22,13 +22,15 @@ module.exports = async (req, res) => {
   if (req.method === 'POST' && action === 'login') {
     try {
       const { username, password } = req.body;
+      const email = username; // Accept both email and username for login
 
-      if (!username || !password) {
-        return res.status(400).json({ error: 'Username and password required' });
+      if (!email || !password) {
+        return res.status(400).json({ error: 'Email and password required' });
       }
 
+      // Try to find user by email first, then by username for backwards compatibility
       const result = await sql`
-        SELECT * FROM users WHERE username = ${username}
+        SELECT * FROM users WHERE email = ${email} OR username = ${email}
       `;
 
       if (result.length === 0) {

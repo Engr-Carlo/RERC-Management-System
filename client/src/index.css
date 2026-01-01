@@ -26,6 +26,8 @@ code {
   --success-color: #4caf50;
   --warning-color: #ff9800;
   --error-color: #f44336;
+  --danger-color: #f44336;
+  --info-color: #03a9f4;
   --text-primary: #212121;
   --text-secondary: #757575;
   --border-color: #e0e0e0;

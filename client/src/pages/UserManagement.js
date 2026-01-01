@@ -185,8 +185,8 @@ const UserManagement = () => {
             <thead>
               <tr>
                 <th>#</th>
-                <th>Username</th>
-                <th>Email</th>
+                <th>Display Name</th>
+                <th>Email (Login)</th>
                 <th>Role</th>
                 <th>Assigned Programs</th>
                 <th>Created At</th>
@@ -267,14 +267,28 @@ const UserManagement = () => {
                 {error && <div className="error-message">{error}</div>}
 
                 <div className="form-group">
-                  <label>Username</label>
+                  <label>Display Name</label>
                   <input
                     type="text"
                     value={newUser.username}
                     onChange={(e) => setNewUser({ ...newUser, username: e.target.value })}
                     required
                     autoFocus
+                    placeholder="e.g., John Doe"
                   />
+                  <small>This will be displayed in the system</small>
+                </div>
+
+                <div className="form-group">
+                  <label>Email (Login Credential)</label>
+                  <input
+                    type="email"
+                    value={newUser.email}
+                    onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                    required
+                    placeholder="reviewer@example.com"
+                  />
+                  <small>This will be used to login to the system</small>
                 </div>
 
                 <div className="form-group">
@@ -287,18 +301,6 @@ const UserManagement = () => {
                     minLength="6"
                   />
                   <small>Minimum 6 characters</small>
-                </div>
-
-                <div className="form-group">
-                  <label>Email</label>
-                  <input
-                    type="email"
-                    value={newUser.email}
-                    onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                    required
-                    placeholder="reviewer@example.com"
-                  />
-                  <small>Email address for the reviewer</small>
                 </div>
 
                 <div className="modal-actions">
