@@ -290,6 +290,96 @@
   background: var(--primary-dark);
 }
 
+/* Action Buttons Container */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.programs-button {
+  background: var(--info-color);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.programs-button:hover {
+  background: #0288d1;
+  transform: translateY(-2px);
+}
+
+/* Programs Modal Specific Styles */
+.programs-modal {
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.programs-list {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  background: #f9f9f9;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.checkbox-label:hover {
+  background: #e3f2fd;
+  border-color: var(--info-color);
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-right: 0.75rem;
+  cursor: pointer;
+  accent-color: var(--primary-color);
+}
+
+.checkbox-label span {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.programs-count {
+  display: block;
+  margin-top: 0.5rem;
+  color: var(--info-color);
+  font-weight: 500;
+}
+
+.no-programs {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 2rem;
+  font-style: italic;
+}
+
+.help-text {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
 @media (max-width: 768px) {
   .users-header {
     flex-direction: column;
@@ -312,5 +402,15 @@
 
   .users-table {
     min-width: 600px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .programs-button,
+  .delete-button {
+    width: 100%;
   }
 }

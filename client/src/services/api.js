@@ -105,4 +105,25 @@ export const userService = {
   }
 };
 
+// Program services
+export const programService = {
+  getAll: async () => {
+    const response = await api.get('/programs');
+    return response.data;
+  }
+};
+
+// Reviewer program assignment services
+export const reviewerProgramService = {
+  getPrograms: async (userId) => {
+    const response = await api.get(`/reviewer-programs/${userId}?userId=${userId}`);
+    return response.data;
+  },
+
+  updatePrograms: async (userId, programs) => {
+    const response = await api.post(`/reviewer-programs/${userId}?userId=${userId}`, { programs });
+    return response.data;
+  }
+};
+
 export default api;

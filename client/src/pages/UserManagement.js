@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
-import { userService, authService } from '../services/api';
+import { userService, authService, programService, reviewerProgramService } from '../services/api';
 import './UserManagement.css';
 
 const UserManagement = () => {
@@ -8,6 +8,10 @@ const UserManagement = () => {
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showProgramsModal, setShowProgramsModal] = useState(false);
+  const [selectedReviewer, setSelectedReviewer] = useState(null);
+  const [allPrograms, setAllPrograms] = useState([]);
+  const [assignedPrograms, setAssignedPrograms] = useState([]);
   const [newUser, setNewUser] = useState({ username: '', password: '', role: 'reviewer' });
   const [newPassword, setNewPassword] = useState('');
   const [error, setError] = useState('');
@@ -15,7 +19,18 @@ const UserManagement = () => {
 
   useEffect(() => {
     fetchUsers();
+    fetchPrograms();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const fetchPrograms = async () => {
+    try {
+      const programs = await programService.getAll();
+      setAllPrograms(programs);
+    } catch (err) {
+      console.error('Failed to load programs:', err);
+    }
+  };
 
   const fetchUsers = async () => {
     try {
@@ -80,6 +95,41 @@ const UserManagement = () => {
     }
   };
 
+  const handleManagePrograms = async (user) => {
+    setSelectedReviewer(user);
+    setError('');
+    try {
+      const programs = await reviewerProgramService.getPrograms(user.id);
+      setAssignedPrograms(programs);
+      setShowProgramsModal(true);
+    } catch (err) {
+      console.error('Failed to load reviewer programs:', err);
+      setAssignedPrograms([]);
+      setShowProgramsModal(true);
+    }
+  };
+
+  const handleToggleProgram = (program) => {
+    if (assignedPrograms.includes(program)) {
+      setAssignedPrograms(assignedPrograms.filter(p => p !== program));
+    } else {
+      setAssignedPrograms([...assignedPrograms, program]);
+    }
+  };
+
+  const handleSavePrograms = async (e) => {
+    e.preventDefault();
+    setError('');
+
+    try {
+      await reviewerProgramService.updatePrograms(selectedReviewer.id, assignedPrograms);
+      setShowProgramsModal(false);
+      alert('Programs updated successfully!');
+    } catch (err) {
+      setError(err.response?.data?.error || 'Failed to update programs');
+    }
+  };
+
   if (loading) {
     return (
       <div>
@@ -134,14 +184,24 @@ const UserManagement = () => {
                   </td>
                   <td>{new Date(user.created_at).toLocaleDateString()}</td>
                   <td>
-                    {user.id !== currentUser.id && (
-                      <button
-                        className="delete-button"
-                        onClick={() => handleDeleteUser(user.id, user.username)}
-                      >
-                        🗑️ Delete
-                      </button>
-                    )}
+                    <div className="action-buttons">
+                      {user.role === 'reviewer' && (
+                        <button
+                          className="programs-button"
+                          onClick={() => handleManagePrograms(user)}
+                        >
+                          📋 Programs
+                        </button>
+                      )}
+                      {user.id !== currentUser.id && (
+                        <button
+                          className="delete-button"
+                          onClick={() => handleDeleteUser(user.id, user.username)}
+                        >
+                          🗑️ Delete
+                        </button>
+                      )}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -243,6 +303,59 @@ const UserManagement = () => {
                   </button>
                   <button type="submit" className="submit-btn">
                     Change Password
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Manage Programs Modal */}
+        {showProgramsModal && (
+          <div className="modal-overlay" onClick={() => setShowProgramsModal(false)}>
+            <div className="modal-content programs-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h2>Manage Programs for {selectedReviewer?.username}</h2>
+                <button className="modal-close" onClick={() => setShowProgramsModal(false)}>
+                  ✕
+                </button>
+              </div>
+
+              <form onSubmit={handleSavePrograms} className="modal-form">
+                {error && <div className="error-message">{error}</div>}
+
+                <div className="form-group">
+                  <label>Assigned Programs</label>
+                  <p className="help-text">Select which programs this reviewer can access:</p>
+                  
+                  <div className="programs-list">
+                    {allPrograms.length === 0 ? (
+                      <p className="no-programs">No programs found in the database. Make sure applications exist in the Google Sheet.</p>
+                    ) : (
+                      allPrograms.map((program) => (
+                        <label key={program} className="checkbox-label">
+                          <input
+                            type="checkbox"
+                            checked={assignedPrograms.includes(program)}
+                            onChange={() => handleToggleProgram(program)}
+                          />
+                          <span>{program}</span>
+                        </label>
+                      ))
+                    )}
+                  </div>
+                  
+                  <small className="programs-count">
+                    {assignedPrograms.length} of {allPrograms.length} programs selected
+                  </small>
+                </div>
+
+                <div className="modal-actions">
+                  <button type="button" className="cancel-btn" onClick={() => setShowProgramsModal(false)}>
+                    Cancel
+                  </button>
+                  <button type="submit" className="submit-btn">
+                    Save Programs
                   </button>
                 </div>
               </form>
