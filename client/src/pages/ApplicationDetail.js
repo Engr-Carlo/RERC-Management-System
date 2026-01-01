@@ -338,6 +338,10 @@ const ApplicationDetail = () => {
                   application['Research Ethics Clearance Application Status'])}
               </div>
               <div className="field-item full-width">
+                <label>Remarks:</label>
+                {renderFieldValue('Remarks', application['Remarks'])}
+              </div>
+              <div className="field-item full-width">
                 <label>Comments:</label>
                 {renderFieldValue('COMMENTS', application['COMMENTS'])}
               </div>
