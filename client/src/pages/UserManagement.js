@@ -13,7 +13,7 @@ const UserManagement = () => {
   const [selectedReviewer, setSelectedReviewer] = useState(null);
   const [allPrograms, setAllPrograms] = useState([]);
   const [assignedPrograms, setAssignedPrograms] = useState([]);
-  const [newUser, setNewUser] = useState({ username: '', password: '', role: 'reviewer' });
+  const [newUser, setNewUser] = useState({ username: '', password: '', email: '', role: 'reviewer' });
   const [newPassword, setNewPassword] = useState('');
   const [error, setError] = useState('');
   const currentUser = authService.getCurrentUser();
@@ -186,6 +186,7 @@ const UserManagement = () => {
               <tr>
                 <th>#</th>
                 <th>Username</th>
+                <th>Email</th>
                 <th>Role</th>
                 <th>Assigned Programs</th>
                 <th>Created At</th>
@@ -199,7 +200,8 @@ const UserManagement = () => {
                   <td>
                     {user.username}
                     {user.id === currentUser.id && <span className="current-user-badge">You</span>}
-                  </td>
+                  </td{user.email || 'N/A'}</td>
+                  <td>>
                   <td>
                     <span className={`role-badge role-${user.role}`}>
                       {user.role}
@@ -288,15 +290,15 @@ const UserManagement = () => {
                 </div>
 
                 <div className="form-group">
-                  <label>Role</label>
-                  <select
-                    value={newUser.role}
-                    onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-                    disabled
-                  >
-                    <option value="reviewer">Reviewer</option>
-                  </select>
-                  <small>Only reviewers can be created. There can only be one admin.</small>
+                  <label>Email</label>
+                  <input
+                    type="email"
+                    value={newUser.email}
+                    onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                    required
+                    placeholder="reviewer@example.com"
+                  />
+                  <small>Email address for the reviewer</small>
                 </div>
 
                 <div className="modal-actions">

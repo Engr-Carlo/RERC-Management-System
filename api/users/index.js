@@ -55,7 +55,7 @@ module.exports = async (req, res) => {
   if (req.method === 'GET') {
     try {
       const result = await sql`
-        SELECT id, username, role, created_at FROM users
+        SELECT id, username, email, role, created_at FROM users
       `;
       res.status(200).json(result);
     } catch (error) {
@@ -64,7 +64,7 @@ module.exports = async (req, res) => {
     }
   } else if (req.method === 'POST') {
     try {
-      const { username, password, role } = req.body;
+      const { username, password, email, role } = req.body;
 
       if (!username || !password) {
         return res.status(400).json({ error: 'Username and password required' });
@@ -77,9 +77,9 @@ module.exports = async (req, res) => {
       const hashedPassword = await bcrypt.hash(password, 10);
 
       const result = await sql`
-        INSERT INTO users (username, password_hash, role)
-        VALUES (${username}, ${hashedPassword}, ${role})
-        RETURNING id, username, role
+        INSERT INTO users (username, password_hash, email, role)
+        VALUES (${username}, ${hashedPassword}, ${email || null}, ${role})
+        RETURNING id, username, email, role
       `;
 
       res.status(201).json(result[0]);

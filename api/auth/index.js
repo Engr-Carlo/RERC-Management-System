@@ -67,7 +67,7 @@ module.exports = async (req, res) => {
 
     try {
       const result = await sql`
-        SELECT id, username, role, created_at FROM users WHERE id = ${authResult.user.userId}
+        SELECT id, username, email, role, created_at FROM users WHERE id = ${authResult.user.userId}
       `;
 
       if (result.length === 0) {
