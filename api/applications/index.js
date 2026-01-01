@@ -1,5 +1,5 @@
 const { sql } = require('../_lib/db');
-const { getAllApplications, updateApplication } = require('../_lib/googleSheets');
+const { getAllApplications, updateApplicationField } = require('../_lib/googleSheets');
 const { authenticateToken } = require('../_lib/auth');
 
 module.exports = async (req, res) => {
@@ -64,7 +64,7 @@ module.exports = async (req, res) => {
       const oldValue = application[fieldName] || '';
       
       // Update Google Sheet
-      await updateApplication(req.query.rowIndex, fieldName, value);
+      await updateApplicationField(req.query.rowIndex, fieldName, value);
 
       // Log the change
       await sql`

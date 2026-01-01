@@ -15,6 +15,7 @@ const ApplicationDetail = () => {
   const [editValue, setEditValue] = useState('');
   const [updating, setUpdating] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  const [newComment, setNewComment] = useState('');
 
   useEffect(() => {
     fetchApplication();
@@ -101,6 +102,47 @@ const ApplicationDetail = () => {
       alert(`Application status updated to: ${status}`);
     } catch (err) {
       alert('Failed to update status. Please try again.');
+      console.error(err);
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleCommentSubmit = async () => {
+    if (!newComment.trim()) {
+      alert('Please enter a comment.');
+      return;
+    }
+
+    if (!window.confirm('Are you sure you want to add this comment?')) {
+      return;
+    }
+
+    try {
+      setUpdating(true);
+      
+      // Append new comment to existing comments
+      const existingComments = application['COMMENTS'] || '';
+      const timestamp = new Date().toLocaleString();
+      const user = JSON.parse(localStorage.getItem('user'));
+      const updatedComments = existingComments 
+        ? `${existingComments}\n\n[${timestamp} - ${user.username}]: ${newComment}`
+        : `[${timestamp} - ${user.username}]: ${newComment}`;
+      
+      await applicationService.update(rowIndex, 'COMMENTS', updatedComments);
+      
+      // Update local state
+      setApplication({
+        ...application,
+        'COMMENTS': updatedComments
+      });
+      
+      setNewComment('');
+      fetchHistory();
+      
+      alert('Comment added successfully!');
+    } catch (err) {
+      alert('Failed to add comment. Please try again.');
       console.error(err);
     } finally {
       setUpdating(false);
@@ -344,6 +386,26 @@ const ApplicationDetail = () => {
               <div className="field-item full-width">
                 <label>Comments:</label>
                 {renderFieldValue('COMMENTS', application['COMMENTS'])}
+              </div>
+              <div className="field-item full-width">
+                <label>Add New Comment:</label>
+                <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                  <textarea
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    placeholder="Enter your comment here..."
+                    rows="3"
+                    style={{ flex: 1, padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                  />
+                  <button 
+                    onClick={handleCommentSubmit}
+                    disabled={updating || !newComment.trim()}
+                    className="btn-primary"
+                    style={{ padding: '8px 16px', whiteSpace: 'nowrap' }}
+                  >
+                    Add Comment
+                  </button>
+                </div>
               </div>
             </div>
           </div>
