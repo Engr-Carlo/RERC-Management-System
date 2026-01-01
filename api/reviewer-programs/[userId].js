@@ -1,5 +1,5 @@
-const { sql } = require('../../_lib/db');
-const { authenticateToken, requireAdmin } = require('../../_lib/auth');
+const { sql } = require('../_lib/db');
+const { authenticateToken, requireAdmin } = require('../_lib/auth');
 
 module.exports = async (req, res) => {
   // Handle CORS
