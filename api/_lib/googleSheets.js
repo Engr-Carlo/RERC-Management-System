@@ -154,14 +154,20 @@ async function updateRowColor(rowIndex, status) {
     
     const sheetId = sheet.properties.sheetId;
     
-    // Define colors based on status
+    // Define colors based on status/action
     let color;
     if (status === 'For Resubmission') {
-      // Green
+      // Green (reviewer)
       color = { red: 0.7, green: 1, blue: 0.7 };
     } else if (status === 'Approved') {
-      // Blue
+      // Blue (reviewer)
       color = { red: 0.7, green: 0.85, blue: 1 };
+    } else if (status === 'resubmission') {
+      // Orange (RERC Head)
+      color = { red: 1, green: 0.8, blue: 0.6 };
+    } else if (status === 'approved') {
+      // Red (RERC Head)
+      color = { red: 1, green: 0.7, blue: 0.7 };
     } else {
       // Default white
       color = { red: 1, green: 1, blue: 1 };

@@ -68,6 +68,14 @@ export const applicationService = {
     return response.data;
   },
 
+  updateStatus: async (rowIndex, statusText, action) => {
+    const response = await api.patch(`/applications?rowIndex=${rowIndex}&statusUpdate=true`, { 
+      statusText, 
+      action 
+    });
+    return response.data;
+  },
+
   getHistory: async (rowIndex) => {
     const response = await api.get(`/applications?history=true&rowIndex=${rowIndex}`);
     return response.data;

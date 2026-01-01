@@ -47,6 +47,49 @@ module.exports = async (req, res) => {
 
     // PATCH - Update application field
     if (req.method === 'PATCH' && req.query.rowIndex) {
+      // Handle RERC Head status update
+      if (req.query.statusUpdate === 'true') {
+        const { statusText, action } = req.body;
+        
+        if (!statusText || !action) {
+          return res.status(400).json({ error: 'Status text and action are required' });
+        }
+
+        // Get current application
+        const applications = await getAllApplications();
+        const application = applications.find(app => String(app.rowIndex) === String(req.query.rowIndex));
+        
+        if (!application) {
+          return res.status(404).json({ error: 'Application not found' });
+        }
+
+        const oldStatus = application['Research Ethics Clearance Application Status'] || '';
+        
+        // Update Google Sheet status
+        await updateApplicationField(req.query.rowIndex, 'Research Ethics Clearance Application Status', statusText);
+        
+        // Update row color based on action
+        await updateRowColor(req.query.rowIndex, action);
+
+        // Log the change
+        await sql`
+          INSERT INTO audit_logs (user_id, username, action, application_row, application_title, field_name, old_value, new_value)
+          VALUES (
+            ${authResult.user.userId},
+            ${authResult.user.username},
+            'update',
+            ${req.query.rowIndex},
+            ${application['APPROVED RESEARCH TITLE'] || 'N/A'},
+            ${'Research Ethics Clearance Application Status'},
+            ${oldStatus},
+            ${statusText}
+          )
+        `;
+
+        return res.status(200).json({ message: 'Status updated successfully' });
+      }
+      
+      // Handle regular field update
       const { fieldName, value } = req.body;
       
       if (!fieldName) {
@@ -93,7 +136,7 @@ module.exports = async (req, res) => {
     if (req.method === 'GET') {
       let applications = await getAllApplications();
 
-      // If user is a reviewer (not admin), filter by assigned programs
+      // If user is a reviewer (not admin or rerc_head), filter by assigned programs
       if (authResult.user.role === 'reviewer') {
         const assignedPrograms = await sql`
           SELECT program FROM reviewer_programs 
@@ -113,6 +156,7 @@ module.exports = async (req, res) => {
           return programNames.includes(appProgram.trim());
         });
       }
+      // Admin and RERC Head see all applications
 
       return res.status(200).json(applications);
     }

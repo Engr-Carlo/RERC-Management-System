@@ -147,6 +147,49 @@ const ApplicationDetail = () => {
     }
   };
 
+  const handleRERCHeadStatusUpdate = async (action) => {
+    const currentDate = new Date().toLocaleDateString('en-US', { 
+      month: '2-digit', 
+      day: '2-digit', 
+      year: 'numeric' 
+    });
+    
+    let statusText;
+    let confirmMessage;
+    
+    if (action === 'resubmission') {
+      statusText = `review results forwarded via email, ${currentDate}`;
+      confirmMessage = 'Are you sure you want to mark this for resubmission?';
+    } else if (action === 'approved') {
+      statusText = `completed; clearance release ${currentDate}`;
+      confirmMessage = 'Are you sure you want to approve this application?';
+    }
+    
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
+
+    try {
+      setUpdating(true);
+      await applicationService.updateStatus(rowIndex, statusText, action);
+      
+      // Update local state
+      setApplication({
+        ...application,
+        'Research Ethics Clearance Application Status': statusText
+      });
+      
+      fetchHistory();
+      
+      alert('Application status updated successfully!');
+    } catch (err) {
+      alert('Failed to update status. Please try again.');
+      console.error(err);
+    } finally {
+      setUpdating(false);
+    }
+  };
+
   const isDocumentField = (fieldName) => {
     return fieldName.toLowerCase().includes('attach') || 
            fieldName.toLowerCase().includes('proof of payment');
