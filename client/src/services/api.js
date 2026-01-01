@@ -116,12 +116,12 @@ export const programService = {
 // Reviewer program assignment services
 export const reviewerProgramService = {
   getPrograms: async (userId) => {
-    const response = await api.get(`/reviewer-programs/${userId}?userId=${userId}`);
+    const response = await api.get(`/reviewer-programs?userId=${userId}`);
     return response.data;
   },
 
   updatePrograms: async (userId, programs) => {
-    const response = await api.post(`/reviewer-programs/${userId}?userId=${userId}`, { programs });
+    const response = await api.post(`/reviewer-programs?userId=${userId}`, { programs });
     return response.data;
   }
 };
