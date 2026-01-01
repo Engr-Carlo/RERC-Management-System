@@ -36,6 +36,7 @@ const UserManagement = () => {
   const fetchUsers = async () => {
     try {
       setLoading(true);
+      setError('');
       const data = await userService.getAll();
       setUsers(data);
       
@@ -54,6 +55,7 @@ const UserManagement = () => {
       setReviewerPrograms(programsMap);
     } catch (err) {
       console.error('Failed to load users:', err);
+      setError(err.response?.data?.error || 'Failed to load users. Please refresh the page.');
     } finally {
       setLoading(false);
     }
@@ -168,11 +170,15 @@ const UserManagement = () => {
             <button className="password-button" onClick={() => setShowPasswordModal(true)}>
               Change My Password
             </button>
-            <button className="add-button" onClick={() => setShowAddModal(true)}>
-              Add User
-            </button>
+            {currentUser.role === 'admin' && (
+              <button className="add-button" onClick={() => setShowAddModal(true)}>
+                Add User
+              </button>
+            )}
           </div>
         </div>
+
+        {error && <div className="error-message" style={{marginBottom: '20px'}}>{error}</div>}
 
         <div className="users-table-container">
           <table className="users-table">
@@ -220,7 +226,7 @@ const UserManagement = () => {
                   <td>{new Date(user.created_at).toLocaleDateString()}</td>
                   <td>
                     <div className="action-buttons">
-                      {user.role === 'reviewer' && (
+                      {user.role === 'reviewer' && currentUser.role === 'admin' && (
                         <button
                           className="programs-button"
                           onClick={() => handleManagePrograms(user)}
@@ -228,7 +234,7 @@ const UserManagement = () => {
                           Manage Programs
                         </button>
                       )}
-                      {user.id !== currentUser.id && (
+                      {currentUser.role === 'admin' && user.id !== currentUser.id && (
                         <button
                           className="delete-button"
                           onClick={() => handleDeleteUser(user.id, user.username)}
@@ -286,10 +292,11 @@ const UserManagement = () => {
                   <select
                     value={newUser.role}
                     onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
+                    disabled
                   >
                     <option value="reviewer">Reviewer</option>
-                    <option value="admin">Admin</option>
                   </select>
+                  <small>Only reviewers can be created. There can only be one admin.</small>
                 </div>
 
                 <div className="modal-actions">
