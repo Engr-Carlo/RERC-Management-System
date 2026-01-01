@@ -23,7 +23,7 @@ api.interceptors.request.use((config) => {
 // Auth services
 export const authService = {
   login: async (username, password) => {
-    const response = await api.post('/auth/login', { username, password });
+    const response = await api.post('/auth?action=login', { username, password });
     if (response.data.token) {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
@@ -46,7 +46,7 @@ export const authService = {
   },
 
   getMe: async () => {
-    const response = await api.get('/auth/me');
+    const response = await api.get('/auth?action=me');
     return response.data;
   }
 };
@@ -100,7 +100,7 @@ export const userService = {
   },
 
   changePassword: async (newPassword) => {
-    const response = await api.put('/users/change-password', { newPassword });
+    const response = await api.put('/users', { newPassword });
     return response.data;
   }
 };
