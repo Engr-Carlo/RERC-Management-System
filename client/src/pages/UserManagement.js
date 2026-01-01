@@ -208,7 +208,7 @@ const UserManagement = () => {
                   <td>
                     {user.role === 'reviewer' ? (
                       <div className="programs-display">
-                        {reviewerPrograms[user.id]?.length > 0 ? (
+                        {Array.isArray(reviewerPrograms[user.id]) && reviewerPrograms[user.id].length > 0 ? (
                           <>
                             <span className="program-count">{reviewerPrograms[user.id].length} program(s)</span>
                             <div className="program-list-tooltip">
