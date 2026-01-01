@@ -15,12 +15,22 @@ const Profile = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const currentUser = authService.getCurrentUser();
-    if (!currentUser) {
-      navigate('/login');
-    } else {
-      setUser(currentUser);
-    }
+    const fetchUserData = async () => {
+      try {
+        const userData = await authService.getMe();
+        setUser(userData);
+      } catch (err) {
+        console.error('Failed to fetch user data:', err);
+        const currentUser = authService.getCurrentUser();
+        if (!currentUser) {
+          navigate('/login');
+        } else {
+          setUser(currentUser);
+        }
+      }
+    };
+    
+    fetchUserData();
   }, [navigate]);
 
   const handleChangePassword = async (e) => {

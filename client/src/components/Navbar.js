@@ -25,15 +25,14 @@ const Navbar = () => {
             Dashboard
           </button>
           
+          <button className="nav-button" onClick={() => navigate('/audit-logs')}>
+            Audit Logs
+          </button>
+          
           {user?.role === 'admin' && (
-            <>
-              <button className="nav-button" onClick={() => navigate('/audit-logs')}>
-                Audit Logs
-              </button>
-              <button className="nav-button" onClick={() => navigate('/users')}>
-                Users
-              </button>
-            </>
+            <button className="nav-button" onClick={() => navigate('/users')}>
+              Users
+            </button>
           )}
         </div>
 

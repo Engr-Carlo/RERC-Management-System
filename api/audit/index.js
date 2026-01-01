@@ -25,10 +25,7 @@ module.exports = async (req, res) => {
     return res.status(authResult.status).json({ error: authResult.error });
   }
 
-  const adminCheck = requireAdmin(authResult.user);
-  if (adminCheck) {
-    return res.status(adminCheck.status).json({ error: adminCheck.error });
-  }
+  // Remove admin check - allow all authenticated users to view audit logs
 
   try {
     const limit = parseInt(req.query.limit) || 100;
