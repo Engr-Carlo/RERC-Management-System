@@ -37,11 +37,11 @@ module.exports = async (req, res) => {
       SELECT * FROM users WHERE username = ${username}
     `;
 
-    if (result.rows.length === 0) {
+    if (result.length === 0) {
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    const user = result.rows[0];
+    const user = result[0];
     const isValidPassword = await bcrypt.compare(password, user.password || user.password_hash);
 
     if (!isValidPassword) {

@@ -32,7 +32,7 @@ module.exports = async (req, res) => {
       const result = await sql`
         SELECT id, username, role, created_at FROM users
       `;
-      res.status(200).json(result.rows);
+      res.status(200).json(result);
     } catch (error) {
       console.error('Error:', error);
       res.status(500).json({ error: 'Failed to fetch users' });
@@ -57,7 +57,7 @@ module.exports = async (req, res) => {
         RETURNING id, username, role
       `;
 
-      res.status(201).json(result.rows[0]);
+      res.status(201).json(result[0]);
     } catch (error) {
       if (error.message.includes('unique')) {
         return res.status(400).json({ error: 'Username already exists' });

@@ -39,7 +39,7 @@ module.exports = async (req, res) => {
       LIMIT ${limit}
     `;
 
-    res.status(200).json(result.rows);
+    res.status(200).json(result);
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Failed to fetch audit logs' });

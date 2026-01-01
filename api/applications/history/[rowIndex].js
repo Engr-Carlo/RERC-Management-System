@@ -34,7 +34,7 @@ module.exports = async (req, res) => {
       ORDER BY timestamp DESC
     `;
 
-    res.status(200).json(result.rows);
+    res.status(200).json(result);
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: 'Failed to fetch history' });
