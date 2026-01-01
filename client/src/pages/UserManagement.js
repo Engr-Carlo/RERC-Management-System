@@ -5,6 +5,7 @@ import './UserManagement.css';
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
+  const [reviewerPrograms, setReviewerPrograms] = useState({});
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -37,6 +38,20 @@ const UserManagement = () => {
       setLoading(true);
       const data = await userService.getAll();
       setUsers(data);
+      
+      // Fetch programs for each reviewer
+      const programsMap = {};
+      for (const user of data) {
+        if (user.role === 'reviewer') {
+          try {
+            const programs = await reviewerProgramService.getPrograms(user.id);
+            programsMap[user.id] = programs;
+          } catch (err) {
+            programsMap[user.id] = [];
+          }
+        }
+      }
+      setReviewerPrograms(programsMap);
     } catch (err) {
       console.error('Failed to load users:', err);
     } finally {
@@ -125,6 +140,7 @@ const UserManagement = () => {
       await reviewerProgramService.updatePrograms(selectedReviewer.id, assignedPrograms);
       setShowProgramsModal(false);
       alert('Programs updated successfully!');
+      fetchUsers(); // Refresh to show updated programs
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to update programs');
     }
@@ -150,10 +166,10 @@ const UserManagement = () => {
           <h1>User Management</h1>
           <div className="header-actions">
             <button className="password-button" onClick={() => setShowPasswordModal(true)}>
-              🔑 Change My Password
+              Change My Password
             </button>
             <button className="add-button" onClick={() => setShowAddModal(true)}>
-              ➕ Add User
+              Add User
             </button>
           </div>
         </div>
@@ -165,6 +181,7 @@ const UserManagement = () => {
                 <th>#</th>
                 <th>Username</th>
                 <th>Role</th>
+                <th>Assigned Programs</th>
                 <th>Created At</th>
                 <th>Actions</th>
               </tr>
@@ -182,6 +199,24 @@ const UserManagement = () => {
                       {user.role}
                     </span>
                   </td>
+                  <td>
+                    {user.role === 'reviewer' ? (
+                      <div className="programs-display">
+                        {reviewerPrograms[user.id]?.length > 0 ? (
+                          <>
+                            <span className="program-count">{reviewerPrograms[user.id].length} program(s)</span>
+                            <div className="program-list-tooltip">
+                              {reviewerPrograms[user.id].join(', ')}
+                            </div>
+                          </>
+                        ) : (
+                          <span className="no-programs">No programs assigned</span>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-muted">All programs</span>
+                    )}
+                  </td>
                   <td>{new Date(user.created_at).toLocaleDateString()}</td>
                   <td>
                     <div className="action-buttons">
@@ -190,7 +225,7 @@ const UserManagement = () => {
                           className="programs-button"
                           onClick={() => handleManagePrograms(user)}
                         >
-                          📋 Programs
+                          Manage Programs
                         </button>
                       )}
                       {user.id !== currentUser.id && (
@@ -198,7 +233,7 @@ const UserManagement = () => {
                           className="delete-button"
                           onClick={() => handleDeleteUser(user.id, user.username)}
                         >
-                          🗑️ Delete
+                          Delete
                         </button>
                       )}
                     </div>
@@ -216,7 +251,7 @@ const UserManagement = () => {
               <div className="modal-header">
                 <h2>Add New User</h2>
                 <button className="modal-close" onClick={() => setShowAddModal(false)}>
-                  ✕
+                  &times;
                 </button>
               </div>
 
@@ -277,7 +312,7 @@ const UserManagement = () => {
               <div className="modal-header">
                 <h2>Change Password</h2>
                 <button className="modal-close" onClick={() => setShowPasswordModal(false)}>
-                  ✕
+                  &times;
                 </button>
               </div>
 
@@ -317,7 +352,7 @@ const UserManagement = () => {
               <div className="modal-header">
                 <h2>Manage Programs for {selectedReviewer?.username}</h2>
                 <button className="modal-close" onClick={() => setShowProgramsModal(false)}>
-                  ✕
+                  &times;
                 </button>
               </div>
 

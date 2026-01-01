@@ -146,7 +146,7 @@ const ApplicationDetail = () => {
             className="edit-icon-button"
             title="Edit"
           >
-            ✏️
+            Edit
           </button>
         )}
       </div>

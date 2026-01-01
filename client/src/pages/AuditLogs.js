@@ -114,7 +114,7 @@ const AuditLogs = () => {
               <div key={log.id} className="log-item">
                 <div className="log-header">
                   <div className="log-user">
-                    <span className="user-icon">👤</span>
+                    <span className="user-icon">User:</span>
                     <strong>{log.username}</strong>
                   </div>
                   {getActionBadge(log.action)}

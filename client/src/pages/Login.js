@@ -68,7 +68,7 @@ const Login = () => {
 
         <div className="login-footer">
           <p>Default credentials: admin / admin123</p>
-          <p className="warning">⚠️ Change password after first login</p>
+          <p className="warning">Note: Change password after first login</p>
         </div>
       </div>
     </div>
