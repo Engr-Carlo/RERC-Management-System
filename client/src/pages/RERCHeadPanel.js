@@ -26,18 +26,15 @@ const RERCHeadPanel = () => {
       setLoading(true);
       const data = await applicationService.getAll();
       
-      // Filter to show applications marked by reviewers (For Resubmission or Approved) with comments
-      // These need final decision from RERC Head
+      // Filter to show applications that have remarks/comments but NO status yet
+      // These are applications reviewed by reviewers but not yet finalized by RERC Head
       const reviewed = data.filter(app => {
+        const status = app['Research Ethics Clearance Application Status'] || '';
         const remarks = app['Remarks'] || '';
         const comments = app['Comments'] || '';
-        const remarksLower = remarks.toLowerCase();
         
-        // Show applications that reviewers have marked as "For Resubmission" or "Approved" and have comments
-        const hasReviewerDecision = remarksLower.includes('for resubmission') || remarksLower.includes('approved');
-        const hasComments = comments.trim();
-        
-        return hasReviewerDecision && hasComments;
+        // Show applications that have remarks OR comments but NO status
+        return (remarks.trim() || comments.trim()) && !status.trim();
       });
       
       setApplications(reviewed);
