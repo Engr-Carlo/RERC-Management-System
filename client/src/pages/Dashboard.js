@@ -120,8 +120,11 @@ const Dashboard = () => {
       const timestamp = app['Date'];
       if (timestamp) {
         const date = new Date(timestamp);
-        const monthKey = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
-        monthCounts[monthKey] = (monthCounts[monthKey] || 0) + 1;
+        // Check if date is valid
+        if (!isNaN(date.getTime())) {
+          const monthKey = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+          monthCounts[monthKey] = (monthCounts[monthKey] || 0) + 1;
+        }
       }
     });
 
@@ -152,6 +155,8 @@ const Dashboard = () => {
       const monthApps = applications.filter(app => {
         if (!app['Date']) return false;
         const appDate = new Date(app['Date']);
+        // Check if date is valid
+        if (isNaN(appDate.getTime())) return false;
         return appDate.getMonth() === date.getMonth() && appDate.getFullYear() === date.getFullYear();
       });
       
