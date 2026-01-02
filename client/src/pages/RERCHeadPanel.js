@@ -67,22 +67,6 @@ const RERCHeadPanel = () => {
     navigate(`/rerc-head-review/${rowIndex}`);
   };
 
-  const getStatusBadge = (status) => {
-    if (!status) return <span className="status-badge status-pending">Pending Review</span>;
-
-    const statusLower = status.toLowerCase();
-    if (statusLower.includes('completed')) {
-      return <span className="status-badge status-completed">Completed</span>;
-    } else if (statusLower.includes('declined')) {
-      return <span className="status-badge status-declined">Declined</span>;
-    } else if (statusLower.includes('review results forwarded')) {
-      return <span className="status-badge status-for-review">For Final Review</span>;
-    } else if (statusLower.includes('resubmission')) {
-      return <span className="status-badge status-resubmission">For Resubmission</span>;
-    }
-    return <span className="status-badge status-pending">{status}</span>;
-  };
-
   const truncateText = (text, maxLength = 50) => {
     if (!text) return 'N/A';
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
