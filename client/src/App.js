@@ -7,6 +7,7 @@ import ApplicationDetail from './pages/ApplicationDetail';
 import AuditLogs from './pages/AuditLogs';
 import UserManagement from './pages/UserManagement';
 import Profile from './pages/Profile';
+import RERCHeadPanel from './pages/RERCHeadPanel';
 import ProtectedRoute from './components/ProtectedRoute';
 import { authService } from './services/api';
 
@@ -44,6 +45,14 @@ function App() {
           element={
             <ProtectedRoute adminOnly={true}>
               <UserManagement />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/rerc-head-panel"
+          element={
+            <ProtectedRoute>
+              <RERCHeadPanel />
             </ProtectedRoute>
           }
         />

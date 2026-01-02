@@ -25,6 +25,12 @@ const Navbar = () => {
             Dashboard
           </button>
           
+          {user?.role === 'rerc_head' && (
+            <button className="nav-button" onClick={() => navigate('/rerc-head-panel')}>
+              RERC Head Panel
+            </button>
+          )}
+          
           <button className="nav-button" onClick={() => navigate('/audit-logs')}>
             Audit Logs
           </button>
