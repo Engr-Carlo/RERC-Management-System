@@ -93,6 +93,24 @@ const Dashboard = () => {
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
   };
 
+  const getStatistics = () => {
+    const total = applications.length;
+    const pending = applications.filter(app => {
+      const status = app['Research Ethics Clearance Application Status'] || '';
+      return status === '' || status.toLowerCase().includes('pending');
+    }).length;
+    const approved = applications.filter(app => {
+      const status = app['Research Ethics Clearance Application Status'] || '';
+      return status.toLowerCase().includes('completed');
+    }).length;
+    const needsRevision = applications.filter(app => {
+      const status = app['Research Ethics Clearance Application Status'] || '';
+      return status.toLowerCase().includes('review results forwarded');
+    }).length;
+    
+    return { total, pending, approved, needsRevision };
+  };
+
   if (loading) {
     return (
       <div>
@@ -110,10 +128,68 @@ const Dashboard = () => {
       <Navbar />
       <div className="dashboard-container">
         <div className="dashboard-header">
-          <h1>Research Ethics Applications</h1>
+          <div>
+            <h1>Research Ethics Applications</h1>
+            <p className="dashboard-subtitle">Manage and review ethics clearance submissions</p>
+          </div>
           <button className="refresh-button" onClick={fetchApplications}>
-            🔄 Refresh
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+            </svg>
+            Refresh
           </button>
+        </div>
+
+        {/* Statistics Cards */}
+        <div className="stats-grid">
+          <div className="stat-card stat-total">
+            <div className="stat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+            </div>
+            <div className="stat-details">
+              <div className="stat-value">{getStatistics().total}</div>
+              <div className="stat-label">Total Applications</div>
+            </div>
+          </div>
+
+          <div className="stat-card stat-pending">
+            <div className="stat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 6v6l4 2"/>
+              </svg>
+            </div>
+            <div className="stat-details">
+              <div className="stat-value">{getStatistics().pending}</div>
+              <div className="stat-label">Pending Review</div>
+            </div>
+          </div>
+
+          <div className="stat-card stat-approved">
+            <div className="stat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <div className="stat-details">
+              <div className="stat-value">{getStatistics().approved}</div>
+              <div className="stat-label">Approved</div>
+            </div>
+          </div>
+
+          <div className="stat-card stat-revision">
+            <div className="stat-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+              </svg>
+            </div>
+            <div className="stat-details">
+              <div className="stat-value">{getStatistics().needsRevision}</div>
+              <div className="stat-label">Needs Revision</div>
+            </div>
+          </div>
         </div>
 
         {error && <div className="error-banner">{error}</div>}
