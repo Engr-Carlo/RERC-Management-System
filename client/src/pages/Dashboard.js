@@ -117,7 +117,7 @@ const Dashboard = () => {
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     
     applications.forEach(app => {
-      const timestamp = app['Timestamp'];
+      const timestamp = app['Date'];
       if (timestamp) {
         const date = new Date(timestamp);
         const monthKey = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
@@ -150,8 +150,8 @@ const Dashboard = () => {
       const monthKey = `${monthNames[date.getMonth()]}`;
       
       const monthApps = applications.filter(app => {
-        if (!app['Timestamp']) return false;
-        const appDate = new Date(app['Timestamp']);
+        if (!app['Date']) return false;
+        const appDate = new Date(app['Date']);
         return appDate.getMonth() === date.getMonth() && appDate.getFullYear() === date.getFullYear();
       });
       
