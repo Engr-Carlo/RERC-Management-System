@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { applicationService } from '../services/api';
+import { applicationService, authService } from '../services/api';
 import './RERCHeadPanel.css';
 
 const RERCHeadPanel = () => {
@@ -26,15 +26,18 @@ const RERCHeadPanel = () => {
       setLoading(true);
       const data = await applicationService.getAll();
       
-      // Filter to show only applications that have remarks/comments but NO status yet
-      // These are applications reviewed by reviewers but not yet finalized by RERC Head
+      // Filter to show applications marked by reviewers (For Resubmission or Approved) with comments
+      // These need final decision from RERC Head
       const reviewed = data.filter(app => {
-        const status = app['Research Ethics Clearance Application Status'] || '';
         const remarks = app['Remarks'] || '';
         const comments = app['Comments'] || '';
+        const remarksLower = remarks.toLowerCase();
         
-        // Show applications that have remarks OR comments but NO status
-        return (remarks.trim() || comments.trim()) && !status.trim();
+        // Show applications that reviewers have marked as "For Resubmission" or "Approved" and have comments
+        const hasReviewerDecision = remarksLower.includes('for resubmission') || remarksLower.includes('approved');
+        const hasComments = comments.trim();
+        
+        return hasReviewerDecision && hasComments;
       });
       
       setApplications(reviewed);
@@ -103,8 +106,8 @@ const RERCHeadPanel = () => {
       <div className="rerc-head-container">
         <div className="panel-header">
           <div>
-            <h1>RERC Head Final Review Panel</h1>
-            <p className="panel-subtitle">Applications with reviewer remarks/comments awaiting your final decision</p>
+            <h1>For Final Review</h1>
+            <p className="panel-subtitle">Applications reviewed by committee members awaiting RERC Head final decision</p>
           </div>
           <button className="refresh-button" onClick={fetchReviewedApplications}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -147,7 +150,7 @@ const RERCHeadPanel = () => {
           <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
           </svg>
-          <span>These applications have remarks or comments from reviewers but no final status yet. Click to review and add your final decision.</span>
+          <span>These applications have been reviewed by committee members. Only RERC Head can make the final decision to approve or decline.</span>
         </div>
 
         <div className="table-container">
@@ -159,7 +162,7 @@ const RERCHeadPanel = () => {
                 <th>Research Title</th>
                 <th>College</th>
                 <th>Program</th>
-                <th>Reviewer Status</th>
+                <th>Reviewer Decision</th>
                 <th>Action</th>
               </tr>
             </thead>
@@ -184,14 +187,18 @@ const RERCHeadPanel = () => {
                     <td>{truncateText(app['APPROVED RESEARCH TITLE'], 60)}</td>
                     <td>{truncateText(app['College'])}</td>
                     <td>{truncateText(app['Program'])}</td>
-                    <td>{getStatusBadge(app['Research Ethics Clearance Application Status'])}</td>
+                    <td>{truncateText(app['Remarks'])}</td>
                     <td>
-                      <button
-                        className="review-button"
-                        onClick={() => handleRowClick(app.rowIndex)}
-                      >
-                        Review & Decide
-                      </button>
+                      {authService.getCurrentUser()?.role === 'rerc_head' ? (
+                        <button
+                          className="review-button"
+                          onClick={() => handleRowClick(app.rowIndex)}
+                        >
+                          Review & Decide
+                        </button>
+                      ) : (
+                        <span className="access-restricted">RERC Head Only</span>
+                      )}
                     </td>
                   </tr>
                 ))

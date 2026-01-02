@@ -359,6 +359,19 @@
   box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
 }
 
+.access-restricted {
+  display: inline-block;
+  padding: 0.65rem 1.25rem;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #64748b;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
 /* Loading States */
 .loading-container {
   display: flex;
