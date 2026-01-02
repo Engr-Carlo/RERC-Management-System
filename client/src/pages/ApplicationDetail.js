@@ -312,7 +312,6 @@ const ApplicationDetail = () => {
                 {renderFieldValue('Email Address', application['Email Address'])}
               </div>
             </div>
-          </div>
 
           <h2>Research Details</h2>
           <div className="field-grid">
@@ -334,7 +333,6 @@ const ApplicationDetail = () => {
                 {renderFieldValue('APPROVED RESEARCH TITLE', application['APPROVED RESEARCH TITLE'])}
               </div>
             </div>
-          </div>
 
           <h2>Documents</h2>
           <div className="field-grid">
@@ -364,7 +362,6 @@ const ApplicationDetail = () => {
                   application['Attach PROOF OF PAYMENT OF RESEARCH ETHICS FEE (Php100.00)'])}
               </div>
             </div>
-          </div>
 
           <h2>Application Status</h2>
           <div className="field-grid">
@@ -402,7 +399,6 @@ const ApplicationDetail = () => {
                 </div>
               </div>
             </div>
-          </div>
 
           {showHistory && history.length > 0 && (
             <div>
