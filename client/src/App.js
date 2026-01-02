@@ -8,6 +8,7 @@ import AuditLogs from './pages/AuditLogs';
 import UserManagement from './pages/UserManagement';
 import Profile from './pages/Profile';
 import RERCHeadPanel from './pages/RERCHeadPanel';
+import RERCHeadReview from './pages/RERCHeadReview';
 import ProtectedRoute from './components/ProtectedRoute';
 import { authService } from './services/api';
 
@@ -53,6 +54,14 @@ function App() {
           element={
             <ProtectedRoute>
               <RERCHeadPanel />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/rerc-head-review/:rowIndex"
+          element={
+            <ProtectedRoute>
+              <RERCHeadReview />
             </ProtectedRoute>
           }
         />

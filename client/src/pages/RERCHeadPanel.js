@@ -61,7 +61,7 @@ const RERCHeadPanel = () => {
   };
 
   const handleRowClick = (rowIndex) => {
-    navigate(`/application/${rowIndex}`);
+    navigate(`/rerc-head-review/${rowIndex}`);
   };
 
   const getStatusBadge = (status) => {
