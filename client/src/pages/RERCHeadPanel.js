@@ -26,16 +26,15 @@ const RERCHeadPanel = () => {
       setLoading(true);
       const data = await applicationService.getAll();
       
-      // Filter to show only applications that have been reviewed by reviewers
-      // (those with status containing "resubmission" or "approved" from reviewer actions)
+      // Filter to show only applications that have remarks/comments but NO status yet
+      // These are applications reviewed by reviewers but not yet finalized by RERC Head
       const reviewed = data.filter(app => {
         const status = app['Research Ethics Clearance Application Status'] || '';
         const remarks = app['Remarks'] || '';
+        const comments = app['Comments'] || '';
         
-        // Show applications that have reviewer feedback but not yet final RERC Head decision
-        return status.toLowerCase().includes('review results forwarded') || 
-               status.toLowerCase().includes('for resubmission') ||
-               (remarks && !status.toLowerCase().includes('completed') && !status.toLowerCase().includes('declined'));
+        // Show applications that have remarks OR comments but NO status
+        return (remarks.trim() || comments.trim()) && !status.trim();
       });
       
       setApplications(reviewed);
@@ -105,7 +104,7 @@ const RERCHeadPanel = () => {
         <div className="panel-header">
           <div>
             <h1>RERC Head Final Review Panel</h1>
-            <p className="panel-subtitle">Review applications and make final decisions (Completed or Declined)</p>
+            <p className="panel-subtitle">Applications with reviewer remarks/comments awaiting your final decision</p>
           </div>
           <button className="refresh-button" onClick={fetchReviewedApplications}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -148,7 +147,7 @@ const RERCHeadPanel = () => {
           <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
           </svg>
-          <span>These applications have been reviewed by reviewers. Click on any application to view details and make your final decision (Completed or Declined).</span>
+          <span>These applications have remarks or comments from reviewers but no final status yet. Click to review and add your final decision.</span>
         </div>
 
         <div className="table-container">
