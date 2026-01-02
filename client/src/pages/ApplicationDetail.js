@@ -279,8 +279,9 @@ const ApplicationDetail = () => {
         </div>
 
         <div className="detail-content">
-          <h2>Researcher Information</h2>
-          <div className="field-grid">
+          <div>
+            <h2>Researcher Information</h2>
+            <div className="field-grid">
               <div className="field-item">
                 <label>Lead Researcher:</label>
                 {renderFieldValue('Name of Lead Researcher (First Name Middle Initial. Last Name) ', 
@@ -312,9 +313,11 @@ const ApplicationDetail = () => {
                 {renderFieldValue('Email Address', application['Email Address'])}
               </div>
             </div>
+          </div>
 
-          <h2>Research Details</h2>
-          <div className="field-grid">
+          <div>
+            <h2>Research Details</h2>
+            <div className="field-grid">
               <div className="field-item full-width">
                 <label>Submission Date:</label>
                 {renderFieldValue('Date', application['Date'])}
@@ -333,9 +336,11 @@ const ApplicationDetail = () => {
                 {renderFieldValue('APPROVED RESEARCH TITLE', application['APPROVED RESEARCH TITLE'])}
               </div>
             </div>
+          </div>
 
-          <h2>Documents</h2>
-          <div className="field-grid">
+          <div>
+            <h2>Documents</h2>
+            <div className="field-grid">
               <div className="field-item full-width">
                 <label>Research Ethics Application Form (PNC:PRE-FO-49):</label>
                 {renderFieldValue('Attach DULY ACCOMPLISHED AND SIGNED PNC:PRE-FO-49 Research Ethics Application Form ', 
@@ -362,9 +367,11 @@ const ApplicationDetail = () => {
                   application['Attach PROOF OF PAYMENT OF RESEARCH ETHICS FEE (Php100.00)'])}
               </div>
             </div>
+          </div>
 
-          <h2>Application Status</h2>
-          <div className="field-grid">
+          <div>
+            <h2>Application Status</h2>
+            <div className="field-grid">
               <div className="field-item full-width">
                 <label>Status:</label>
                 {renderFieldValue('Research Ethics Clearance Application Status', 
@@ -399,6 +406,7 @@ const ApplicationDetail = () => {
                 </div>
               </div>
             </div>
+          </div>
 
           {showHistory && history.length > 0 && (
             <div>
