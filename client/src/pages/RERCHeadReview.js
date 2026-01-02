@@ -195,17 +195,86 @@ const RERCHeadReview = () => {
             </div>
           )}
 
-          <div className="fields-grid">
-            {Object.entries(application)
-              .filter(([key]) => key !== 'rowIndex' && key !== 'Remarks' && key !== 'Comments' && key !== 'Research Ethics Clearance Application Status')
-              .map(([fieldName, value]) => (
-                <div key={fieldName} className="field-item">
-                  <div className="field-label">{fieldName}</div>
-                  <div className="field-value">
-                    {renderFieldValue(fieldName, value)}
-                  </div>
-                </div>
-              ))}
+          <div className="section-card">
+            <h3>Researcher Information</h3>
+            <div className="field-row">
+              <div className="field-col">
+                <div className="field-label">Lead Researcher</div>
+                <div className="field-value">{renderFieldValue('Name of Lead Researcher', application['Name of Lead Researcher (First Name Middle Initial. Last Name) '])}</div>
+              </div>
+              <div className="field-col">
+                <div className="field-label">Student Email</div>
+                <div className="field-value">{renderFieldValue('Active Email Address', application['Active Email Address'])}</div>
+              </div>
+            </div>
+            <div className="field-row">
+              <div className="field-col full-width">
+                <div className="field-label">Other Researchers</div>
+                <div className="field-value">{renderFieldValue('Other Researchers', application['Name of Other Researchers  (First Name Middle Initial. Last Name) separate with comma for more than one'])}</div>
+              </div>
+            </div>
+            <div className="field-row">
+              <div className="field-col">
+                <div className="field-label">College</div>
+                <div className="field-value">{renderFieldValue('College', application['College'])}</div>
+              </div>
+              <div className="field-col">
+                <div className="field-label">Program</div>
+                <div className="field-value">{renderFieldValue('Program', application['Program'])}</div>
+              </div>
+            </div>
+            <div className="field-row">
+              <div className="field-col">
+                <div className="field-label">Research Adviser</div>
+                <div className="field-value">{renderFieldValue('Research Adviser', application['Name of Research Adviser'])}</div>
+              </div>
+              <div className="field-col">
+                <div className="field-label">Adviser Email</div>
+                <div className="field-value">{renderFieldValue('Email Address', application['Email Address'])}</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="section-card">
+            <h3>Research Details</h3>
+            <div className="field-row">
+              <div className="field-col full-width">
+                <div className="field-label">Research Title</div>
+                <div className="field-value">{renderFieldValue('Research Title', application['APPROVED RESEARCH TITLE'])}</div>
+              </div>
+            </div>
+            <div className="field-row">
+              <div className="field-col">
+                <div className="field-label">Type of Application</div>
+                <div className="field-value">{renderFieldValue('Type of Application', application['Type of Application'])}</div>
+              </div>
+              <div className="field-col">
+                <div className="field-label">Submission Date</div>
+                <div className="field-value">{renderFieldValue('Date', application['Date'])}</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="section-card">
+            <h3>Documents</h3>
+            <div className="field-row">
+              <div className="field-col full-width">
+                <div className="field-label">Research Ethics Application Form (PNC:PRE-FO-49)</div>
+                <div className="field-value">{renderFieldValue('Attach DULY ACCOMPLISHED AND SIGNED PNC:PRE-FO-49', application['Attach DULY ACCOMPLISHED AND SIGNED PNC:PRE-FO-49 Research Ethics Application Form '])}</div>
+              </div>
+            </div>
+            <div className="field-row">
+              <div className="field-col full-width">
+                <div className="field-label">Informed Consent Form (PNC PRE-FO-50)</div>
+                <div className="field-value">{renderFieldValue('Attach DULY ACCOMPLISHED AND SIGNED PNC PRE-FO-50', application['Attach DULY ACCOMPLISHED AND SIGNED PNC PRE-FO-50 Informed Consent Form'])}</div>
+              </div>
+            </div>
+            <div className="field-row">
+              <div className="field-col full-width">
+                <div className="field-label">Proof of Payment</div>
+                <div className="field-value">{renderFieldValue('Attach PROOF OF PAYMENT', application['Attach PROOF OF PAYMENT OF RESEARCH ETHICS FEE (Php100.00)'])}</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
