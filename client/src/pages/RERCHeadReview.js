@@ -188,10 +188,10 @@ const RERCHeadReview = () => {
             </div>
           )}
 
-          {application['Comments'] && (
+          {application['COMMENTS'] && (
             <div className="comments-section">
-              <h3>Reviewer Comments</h3>
-              <div className="comments-content">{application['Comments']}</div>
+              <h3>Committee Comments</h3>
+              <div className="comments-content">{application['COMMENTS']}</div>
             </div>
           )}
 
@@ -267,6 +267,18 @@ const RERCHeadReview = () => {
               <div className="field-col full-width">
                 <div className="field-label">Informed Consent Form (PNC PRE-FO-50)</div>
                 <div className="field-value">{renderFieldValue('Attach DULY ACCOMPLISHED AND SIGNED PNC PRE-FO-50', application['Attach DULY ACCOMPLISHED AND SIGNED PNC PRE-FO-50 Informed Consent Form'])}</div>
+              </div>
+            </div>
+            <div className="field-row">
+              <div className="field-col full-width">
+                <div className="field-label">Parental Consent Form (PNC PRE-FO-51)</div>
+                <div className="field-value">{renderFieldValue('Attach DULY ACCOMPLISHED AND SIGNED PNC PRE-FO-51', application['Attach DULY ACCOMPLISHED AND SIGNED PNC PRE-FO-51 Parental Consent Form for Research Undertaking (For research involving minor participants (below 18 years old))'])}</div>
+              </div>
+            </div>
+            <div className="field-row">
+              <div className="field-col full-width">
+                <div className="field-label">Approved Manuscript/Research Paper</div>
+                <div className="field-value">{renderFieldValue('Attach DULY APPROVED Manuscript/Research Paper', application['Attach DULY APPROVED Manuscript/Research Paper'])}</div>
               </div>
             </div>
             <div className="field-row">
