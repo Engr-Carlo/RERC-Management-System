@@ -63,83 +63,116 @@
 /* Statistics Grid */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.5rem;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .stat-card {
   background: white;
-  padding: 1.75rem;
-  border-radius: 16px;
-  border: 1px solid #e2e8f0;
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
+  padding: 0;
+  border-radius: 20px;
+  border: none;
+  overflow: hidden;
   transition: all 0.3s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  position: relative;
 }
 
 .stat-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-  border-color: #cbd5e1;
+  transform: translateY(-6px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.stat-content {
+  padding: 2rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.stat-info {
+  flex: 1;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.75rem;
+}
+
+.stat-value {
+  font-size: 2.75rem;
+  font-weight: 800;
+  color: white;
+  line-height: 1;
+  letter-spacing: -1.5px;
 }
 
 .stat-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 14px;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
   flex-shrink: 0;
 }
 
 .stat-icon svg {
-  width: 28px;
-  height: 28px;
-}
-
-.stat-total .stat-icon {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  width: 24px;
+  height: 24px;
   color: white;
 }
 
-.stat-pending .stat-icon {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: white;
+/* Chart Visualization */
+.stat-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 80px;
+  padding-top: 1rem;
 }
 
-.stat-approved .stat-icon {
-  background: linear-gradient(135deg, #10b981, #059669);
-  color: white;
-}
-
-.stat-revision .stat-icon {
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  color: white;
-}
-
-.stat-details {
+.chart-bar {
   flex: 1;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px 4px 0 0;
+  transition: all 0.3s ease;
+  min-height: 20px;
 }
 
-.stat-value {
-  font-size: 2.25rem;
-  font-weight: 800;
-  color: #0f172a;
-  line-height: 1;
-  margin-bottom: 0.5rem;
-  letter-spacing: -1px;
+.chart-bar:hover {
+  background: rgba(255, 255, 255, 0.5);
 }
 
-.stat-label {
-  font-size: 0.9rem;
-  color: #64748b;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+/* Color Themes for Each Card */
+.stat-total {
+  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+}
+
+.stat-pending {
+  background: linear-gradient(135deg, #00BCD4 0%, #0097A7 100%);
+}
+
+.stat-approved {
+  background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
+}
+
+.stat-revision {
+  background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%);
 }
 
 /* Error Banner */
@@ -323,27 +356,27 @@
 }
 
 .status-approved {
-  background: linear-gradient(135deg, #d1fae5, #a7f3d0);
-  color: #065f46;
-  border: 1px solid #6ee7b7;
+  background: linear-gradient(135deg, #E1BEE7, #CE93D8);
+  color: #6A1B9A;
+  border: 1px solid #BA68C8;
 }
 
 .status-pending {
-  background: linear-gradient(135deg, #fed7aa, #fde68a);
-  color: #92400e;
-  border: 1px solid #fbbf24;
+  background: linear-gradient(135deg, #FFE0B2, #FFCC80);
+  color: #E65100;
+  border: 1px solid #FFB74D;
 }
 
 .status-rejected {
-  background: linear-gradient(135deg, #fecaca, #fca5a5);
-  color: #991b1b;
-  border: 1px solid #f87171;
+  background: linear-gradient(135deg, #FFCDD2, #EF9A9A);
+  color: #C62828;
+  border: 1px solid #E57373;
 }
 
 .status-revision {
-  background: linear-gradient(135deg, #ddd6fe, #c4b5fd);
-  color: #5b21b6;
-  border: 1px solid #a78bfa;
+  background: linear-gradient(135deg, #B2EBF2, #80DEEA);
+  color: #00838F;
+  border: 1px solid #4DD0E1;
 }
 
 /* View Button */
