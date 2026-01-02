@@ -228,6 +228,11 @@ const Dashboard = () => {
               <div className="stat-chart">
                 <ResponsiveContainer width="100%" height={80}>
                   <BarChart data={getMonthlyData()}>
+                    <XAxis 
+                      dataKey="month" 
+                      tick={{ fill: 'rgba(255, 255, 255, 0.7)', fontSize: 10 }} 
+                      stroke="rgba(255, 255, 255, 0.3)"
+                    />
                     <Bar dataKey="applications" fill="rgba(255, 255, 255, 0.8)" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -251,7 +256,12 @@ const Dashboard = () => {
               <div className="stat-chart">
                 <ResponsiveContainer width="100%" height={80}>
                   <LineChart data={getTrendData()}>
-                    <Line type="monotone" dataKey="count" stroke="rgba(255, 255, 255, 0.9)" strokeWidth={3} dot={false} />
+                    <XAxis 
+                      dataKey="month" 
+                      tick={{ fill: 'rgba(255, 255, 255, 0.7)', fontSize: 10 }} 
+                      stroke="rgba(255, 255, 255, 0.3)"
+                    />
+                    <Line type="monotone" dataKey="pending" stroke="rgba(255, 255, 255, 0.9)" strokeWidth={3} dot={false} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -274,7 +284,12 @@ const Dashboard = () => {
               <div className="stat-chart">
                 <ResponsiveContainer width="100%" height={80}>
                   <BarChart data={getTrendData()}>
-                    <Bar dataKey="count" fill="rgba(255, 255, 255, 0.8)" radius={[4, 4, 0, 0]} />
+                    <XAxis 
+                      dataKey="month" 
+                      tick={{ fill: 'rgba(255, 255, 255, 0.7)', fontSize: 10 }} 
+                      stroke="rgba(255, 255, 255, 0.3)"
+                    />
+                    <Bar dataKey="approved" fill="rgba(255, 255, 255, 0.8)" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
@@ -297,7 +312,12 @@ const Dashboard = () => {
               <div className="stat-chart">
                 <ResponsiveContainer width="100%" height={80}>
                   <LineChart data={getTrendData()}>
-                    <Line type="monotone" dataKey="count" stroke="rgba(255, 255, 255, 0.9)" strokeWidth={3} dot={false} />
+                    <XAxis 
+                      dataKey="month" 
+                      tick={{ fill: 'rgba(255, 255, 255, 0.7)', fontSize: 10 }} 
+                      stroke="rgba(255, 255, 255, 0.3)"
+                    />
+                    <Line type="monotone" dataKey="needsRevision" stroke="rgba(255, 255, 255, 0.9)" strokeWidth={3} dot={false} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
