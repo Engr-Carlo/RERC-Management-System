@@ -105,12 +105,10 @@
 }
 
 .detail-content > div {
-  padding: 1.5rem 0;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.detail-content > div:last-child {
-  border-bottom: none;
+  background: white;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  padding: 2rem;
 }
 
 .detail-content h2 {
