@@ -296,9 +296,6 @@
   font-size: 0.9rem;
   font-weight: 500;
 }
-  color: var(--text-primary);
-  font-size: 0.9rem;
-}
 
 .clickable-row {
   cursor: pointer;
