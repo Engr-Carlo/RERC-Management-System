@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { applicationService } from '../services/api';
+import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -111,6 +112,55 @@ const Dashboard = () => {
     return { total, pending, approved, needsRevision };
   };
 
+  const getMonthlyData = () => {
+    const monthCounts = {};
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    
+    applications.forEach(app => {
+      const timestamp = app['Timestamp'];
+      if (timestamp) {
+        const date = new Date(timestamp);
+        const monthKey = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+        monthCounts[monthKey] = (monthCounts[monthKey] || 0) + 1;
+      }
+    });
+
+    return Object.entries(monthCounts)
+      .sort((a, b) => new Date(a[0]) - new Date(b[0]))
+      .slice(-6)
+      .map(([month, count]) => ({ month, applications: count }));
+  };
+
+  const getStatusData = () => {
+    const stats = getStatistics();
+    return [
+      { name: 'Pending', value: stats.pending, color: '#3B82F6' },
+      { name: 'Approved', value: stats.approved, color: '#10B981' },
+      { name: 'Needs Revision', value: stats.needsRevision, color: '#F59E0B' }
+    ].filter(item => item.value > 0);
+  };
+
+  const getTrendData = () => {
+    const last12Months = [];
+    const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const now = new Date();
+    
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthKey = `${monthNames[date.getMonth()]}`;
+      
+      const count = applications.filter(app => {
+        if (!app['Timestamp']) return false;
+        const appDate = new Date(app['Timestamp']);
+        return appDate.getMonth() === date.getMonth() && appDate.getFullYear() === date.getFullYear();
+      }).length;
+      
+      last12Months.push({ month: monthKey, count });
+    }
+    
+    return last12Months;
+  };
+
   if (loading) {
     return (
       <div>
@@ -140,7 +190,7 @@ const Dashboard = () => {
           </button>
         </div>
 
-        {/* Statistics Cards */}
+        {/* Statistics Cards with Real Charts */}
         <div className="stats-grid">
           <div className="stat-card stat-total">
             <div className="stat-content">
@@ -156,14 +206,11 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="stat-chart">
-                <div className="chart-bar" style={{height: '45%'}}></div>
-                <div className="chart-bar" style={{height: '70%'}}></div>
-                <div className="chart-bar" style={{height: '55%'}}></div>
-                <div className="chart-bar" style={{height: '85%'}}></div>
-                <div className="chart-bar" style={{height: '65%'}}></div>
-                <div className="chart-bar" style={{height: '90%'}}></div>
-                <div className="chart-bar" style={{height: '75%'}}></div>
-                <div className="chart-bar" style={{height: '60%'}}></div>
+                <ResponsiveContainer width="100%" height={80}>
+                  <BarChart data={getMonthlyData()}>
+                    <Bar dataKey="applications" fill="rgba(255, 255, 255, 0.8)" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </div>
           </div>
@@ -182,14 +229,11 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="stat-chart">
-                <div className="chart-bar" style={{height: '50%'}}></div>
-                <div className="chart-bar" style={{height: '65%'}}></div>
-                <div className="chart-bar" style={{height: '45%'}}></div>
-                <div className="chart-bar" style={{height: '80%'}}></div>
-                <div className="chart-bar" style={{height: '55%'}}></div>
-                <div className="chart-bar" style={{height: '70%'}}></div>
-                <div className="chart-bar" style={{height: '85%'}}></div>
-                <div className="chart-bar" style={{height: '60%'}}></div>
+                <ResponsiveContainer width="100%" height={80}>
+                  <LineChart data={getTrendData()}>
+                    <Line type="monotone" dataKey="count" stroke="rgba(255, 255, 255, 0.9)" strokeWidth={3} dot={false} />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
             </div>
           </div>
@@ -208,14 +252,11 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="stat-chart">
-                <div className="chart-bar" style={{height: '60%'}}></div>
-                <div className="chart-bar" style={{height: '75%'}}></div>
-                <div className="chart-bar" style={{height: '55%'}}></div>
-                <div className="chart-bar" style={{height: '85%'}}></div>
-                <div className="chart-bar" style={{height: '70%'}}></div>
-                <div className="chart-bar" style={{height: '90%'}}></div>
-                <div className="chart-bar" style={{height: '65%'}}></div>
-                <div className="chart-bar" style={{height: '80%'}}></div>
+                <ResponsiveContainer width="100%" height={80}>
+                  <BarChart data={getTrendData()}>
+                    <Bar dataKey="count" fill="rgba(255, 255, 255, 0.8)" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </div>
           </div>
@@ -234,16 +275,57 @@ const Dashboard = () => {
                 </div>
               </div>
               <div className="stat-chart">
-                <div className="chart-bar" style={{height: '40%'}}></div>
-                <div className="chart-bar" style={{height: '60%'}}></div>
-                <div className="chart-bar" style={{height: '50%'}}></div>
-                <div className="chart-bar" style={{height: '75%'}}></div>
-                <div className="chart-bar" style={{height: '55%'}}></div>
-                <div className="chart-bar" style={{height: '85%'}}></div>
-                <div className="chart-bar" style={{height: '70%'}}></div>
-                <div className="chart-bar" style={{height: '65%'}}></div>
+                <ResponsiveContainer width="100%" height={80}>
+                  <LineChart data={getTrendData()}>
+                    <Line type="monotone" dataKey="count" stroke="rgba(255, 255, 255, 0.9)" strokeWidth={3} dot={false} />
+                  </LineChart>
+                </ResponsiveContainer>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Large Data Visualization Section */}
+        <div className="charts-section">
+          <div className="large-chart-card">
+            <h3>Application Submissions Over Time</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={getMonthlyData()}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                <XAxis dataKey="month" stroke="#64748b" />
+                <YAxis stroke="#64748b" />
+                <Tooltip 
+                  contentStyle={{ background: '#1E293B', border: 'none', borderRadius: '8px', color: '#fff' }}
+                  labelStyle={{ color: '#fff' }}
+                />
+                <Bar dataKey="applications" fill="#3B82F6" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="large-chart-card">
+            <h3>Status Distribution</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie
+                  data={getStatusData()}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={100}
+                  paddingAngle={5}
+                  dataKey="value"
+                >
+                  {getStatusData().map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Tooltip 
+                  contentStyle={{ background: '#1E293B', border: 'none', borderRadius: '8px', color: '#fff' }}
+                />
+                <Legend />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
         </div>
 

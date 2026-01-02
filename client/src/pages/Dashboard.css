@@ -19,7 +19,7 @@
 }
 
 .dashboard-header h1 {
-  color: #0f172a;
+  color: #1E293B;
   font-size: 2rem;
   font-weight: 800;
   margin: 0 0 0.5rem 0;
@@ -158,21 +158,45 @@
   background: rgba(255, 255, 255, 0.5);
 }
 
-/* Color Themes for Each Card */
+/* Color Themes for Each Card - Professional Blue System */
 .stat-total {
-  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
 }
 
 .stat-pending {
-  background: linear-gradient(135deg, #00BCD4 0%, #0097A7 100%);
+  background: linear-gradient(135deg, #06B6D4 0%, #0891B2 100%);
 }
 
 .stat-approved {
-  background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
+  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
 }
 
 .stat-revision {
-  background: linear-gradient(135deg, #E91E63 0%, #C2185B 100%);
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+}
+
+/* Large Charts Section */
+.charts-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.large-chart-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.large-chart-card h3 {
+  color: #1E293B;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 1.5rem 0;
+  letter-spacing: -0.5px;
 }
 
 /* Error Banner */
@@ -295,7 +319,7 @@
 }
 
 .applications-table thead {
-  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
   color: white;
 }
 
@@ -356,27 +380,27 @@
 }
 
 .status-approved {
-  background: linear-gradient(135deg, #E1BEE7, #CE93D8);
-  color: #6A1B9A;
-  border: 1px solid #BA68C8;
+  background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+  color: #065F46;
+  border: 1px solid #6EE7B7;
 }
 
 .status-pending {
-  background: linear-gradient(135deg, #FFE0B2, #FFCC80);
-  color: #E65100;
-  border: 1px solid #FFB74D;
+  background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+  color: #92400E;
+  border: 1px solid #FCD34D;
 }
 
 .status-rejected {
-  background: linear-gradient(135deg, #FFCDD2, #EF9A9A);
-  color: #C62828;
-  border: 1px solid #E57373;
+  background: linear-gradient(135deg, #FEE2E2, #FECACA);
+  color: #991B1B;
+  border: 1px solid #FCA5A5;
 }
 
 .status-revision {
-  background: linear-gradient(135deg, #B2EBF2, #80DEEA);
-  color: #00838F;
-  border: 1px solid #4DD0E1;
+  background: linear-gradient(135deg, #DBEAFE, #BFDBFE);
+  color: #1E40AF;
+  border: 1px solid #93C5FD;
 }
 
 /* View Button */

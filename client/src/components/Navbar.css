@@ -1,6 +1,6 @@
 .navbar {
-  background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.15);
   position: sticky;
   top: 0;
   z-index: 1000;
