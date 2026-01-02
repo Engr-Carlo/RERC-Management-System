@@ -149,13 +149,33 @@ const Dashboard = () => {
       const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
       const monthKey = `${monthNames[date.getMonth()]}`;
       
-      const count = applications.filter(app => {
+      const monthApps = applications.filter(app => {
         if (!app['Timestamp']) return false;
         const appDate = new Date(app['Timestamp']);
         return appDate.getMonth() === date.getMonth() && appDate.getFullYear() === date.getFullYear();
+      });
+      
+      const total = monthApps.length;
+      const pending = monthApps.filter(app => {
+        const status = app['Research Ethics Clearance Application Status'] || '';
+        return status === '' || status.toLowerCase().includes('pending');
+      }).length;
+      const approved = monthApps.filter(app => {
+        const status = app['Research Ethics Clearance Application Status'] || '';
+        return status.toLowerCase().includes('completed');
+      }).length;
+      const needsRevision = monthApps.filter(app => {
+        const status = app['Research Ethics Clearance Application Status'] || '';
+        return status.toLowerCase().includes('review results forwarded');
       }).length;
       
-      last12Months.push({ month: monthKey, count });
+      last12Months.push({ 
+        month: monthKey, 
+        total,
+        pending,
+        approved,
+        needsRevision
+      });
     }
     
     return last12Months;
@@ -290,7 +310,7 @@ const Dashboard = () => {
           <div className="large-chart-card">
             <h3>Application Submissions Over Time</h3>
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={getMonthlyData()}>
+              <LineChart data={getTrendData()}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="month" stroke="#64748b" />
                 <YAxis stroke="#64748b" />
@@ -298,8 +318,12 @@ const Dashboard = () => {
                   contentStyle={{ background: '#1E293B', border: 'none', borderRadius: '8px', color: '#fff' }}
                   labelStyle={{ color: '#fff' }}
                 />
-                <Bar dataKey="applications" fill="#3B82F6" radius={[8, 8, 0, 0]} />
-              </BarChart>
+                <Legend />
+                <Line type="monotone" dataKey="total" stroke="#3B82F6" strokeWidth={3} name="Total Applications" />
+                <Line type="monotone" dataKey="pending" stroke="#F59E0B" strokeWidth={3} name="Pending Review" />
+                <Line type="monotone" dataKey="approved" stroke="#10B981" strokeWidth={3} name="Approved" />
+                <Line type="monotone" dataKey="needsRevision" stroke="#EF4444" strokeWidth={3} name="Needs Revision" />
+              </LineChart>
             </ResponsiveContainer>
           </div>
 
