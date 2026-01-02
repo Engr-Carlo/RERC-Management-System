@@ -40,6 +40,13 @@ const Dashboard = () => {
   const filterApplications = () => {
     let filtered = applications;
 
+    // Filter OUT applications that have remarks/comments (those are in For Final Review)
+    filtered = filtered.filter(app => {
+      const remarks = app['Remarks'] || '';
+      const comments = app['Comments'] || '';
+      return !remarks.trim() && !comments.trim();
+    });
+
     // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter(app =>

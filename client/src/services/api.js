@@ -3,6 +3,32 @@ import axios from 'axios';
 // Use relative path for Vercel deployment
 const API_URL = '/api';
 
+// Auto-logout after 1 hour of inactivity
+const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 1 hour in milliseconds
+let inactivityTimer = null;
+
+const resetInactivityTimer = () => {
+  if (inactivityTimer) {
+    clearTimeout(inactivityTimer);
+  }
+  
+  // Only set timer if user is logged in
+  const token = localStorage.getItem('token');
+  if (token) {
+    inactivityTimer = setTimeout(() => {
+      authService.logout();
+      window.location.href = '/';
+    }, INACTIVITY_TIMEOUT);
+  }
+};
+
+// Track user activity
+if (typeof window !== 'undefined') {
+  ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'].forEach(event => {
+    document.addEventListener(event, resetInactivityTimer, true);
+  });
+}
+
 // Get token from localStorage
 const getToken = () => localStorage.getItem('token');
 
@@ -27,6 +53,7 @@ export const authService = {
     if (response.data.token) {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
+      resetInactivityTimer(); // Start inactivity timer
     }
     return response.data;
   },
@@ -34,6 +61,10 @@ export const authService = {
   logout: () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    if (inactivityTimer) {
+      clearTimeout(inactivityTimer);
+      inactivityTimer = null;
+    }
   },
 
   getCurrentUser: () => {
