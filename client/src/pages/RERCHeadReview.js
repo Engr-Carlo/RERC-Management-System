@@ -11,12 +11,16 @@ const RERCHeadReview = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [updating, setUpdating] = useState(false);
+  const [toast, setToast] = useState({ show: false, message: '' });
 
   const copyToClipboard = (text, label) => {
     navigator.clipboard.writeText(text).then(() => {
-      alert(`${label} copied to clipboard!`);
+      setToast({ show: true, message: `${label} copied!` });
+      setTimeout(() => setToast({ show: false, message: '' }), 1000);
     }).catch(err => {
       console.error('Failed to copy:', err);
+      setToast({ show: true, message: 'Failed to copy' });
+      setTimeout(() => setToast({ show: false, message: '' }), 1000);
     });
   };
 
@@ -192,7 +196,19 @@ const RERCHeadReview = () => {
           {application['RERC Code for Revised Submission (Please specify the code assigned by the RERC Committee through your research college representative or research teacher for streamlined tracking of your submission); for New application, write NA'] && 
            application['RERC Code for Revised Submission (Please specify the code assigned by the RERC Committee through your research college representative or research teacher for streamlined tracking of your submission); for New application, write NA'] !== 'NA' && (
             <div className="rerc-code-section">
-              <div className="rerc-code-label">RERC Code</div>
+              <div className="rerc-code-header">
+                <div className="rerc-code-label">RERC Code</div>
+                <button 
+                  className="copy-btn-rerc"
+                  onClick={() => copyToClipboard(application['RERC Code for Revised Submission (Please specify the code assigned by the RERC Committee through your research college representative or research teacher for streamlined tracking of your submission); for New application, write NA'], 'RERC Code')}
+                  title="Copy RERC code"
+                >
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                  </svg>
+                  Copy
+                </button>
+              </div>
               <div className="rerc-code-value">{application['RERC Code for Revised Submission (Please specify the code assigned by the RERC Committee through your research college representative or research teacher for streamlined tracking of your submission); for New application, write NA']}</div>
             </div>
           )}
@@ -343,6 +359,12 @@ const RERCHeadReview = () => {
           </div>
         </div>
       </div>
+      
+      {toast.show && (
+        <div className="toast-notification">
+          {toast.message}
+        </div>
+      )}
     </div>
   );
 };
