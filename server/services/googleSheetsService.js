@@ -53,7 +53,7 @@ class GoogleSheetsService {
     try {
       const response = await this.sheets.spreadsheets.values.get({
         spreadsheetId: this.spreadsheetId,
-        range: `${this.sheetName}!A:Z`,
+        range: `${this.sheetName}!A:ZZ`, // Extended to ZZ to support up to 702 columns
       });
 
       const rows = response.data.values || [];
