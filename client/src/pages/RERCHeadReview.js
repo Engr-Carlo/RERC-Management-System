@@ -170,7 +170,7 @@ const RERCHeadReview = () => {
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm5 11H7v-2h10v2z"/>
             </svg>
             <div>
-              <span className="button-title">DECLINE</span>
+              <span className="button-title">NONCOMPLIANT</span>
               <span className="button-subtitle">Send back for resubmission</span>
             </div>
           </button>
@@ -184,7 +184,7 @@ const RERCHeadReview = () => {
               <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
             </svg>
             <div>
-              <span className="button-title">APPROVE</span>
+              <span className="button-title">COMPLIED</span>
               <span className="button-subtitle">Mark as completed</span>
             </div>
           </button>
