@@ -421,6 +421,7 @@ const Dashboard = () => {
                 <th>Research Title</th>
                 <th>College</th>
                 <th>Program</th>
+                <th>RERC Code</th>
                 <th>Status</th>
                 <th>Action</th>
               </tr>
@@ -428,18 +429,23 @@ const Dashboard = () => {
             <tbody>
               {filteredApplications.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="no-data">
+                  <td colSpan="8" className="no-data">
                     No applications found
                   </td>
                 </tr>
               ) : (
-                filteredApplications.map((app, index) => (
+                filteredApplications.map((app, index) => {
+                  const rercCode = app['RERC Code for Revised Submission (Please specify the code assigned by the RERC Committee through your research college representative or research teacher for streamlined tracking of your submission); for New application, write NA'] || 'N/A';
+                  const displayRercCode = rercCode === 'NA' ? 'N/A' : rercCode;
+                  
+                  return (
                   <tr key={app.rowIndex} className="clickable-row">
                     <td>{index + 1}</td>
                     <td>{truncateText(app['Name of Lead Researcher (First Name Middle Initial. Last Name) '])}</td>
                     <td>{truncateText(app['APPROVED RESEARCH TITLE'], 60)}</td>
                     <td>{truncateText(app['College'])}</td>
                     <td>{truncateText(app['Program'])}</td>
+                    <td className="rerc-code-cell">{truncateText(displayRercCode, 30)}</td>
                     <td>{getStatusBadge(app['Research Ethics Clearance Application Status'])}</td>
                     <td>
                       <button
@@ -450,7 +456,8 @@ const Dashboard = () => {
                       </button>
                     </td>
                   </tr>
-                ))
+                  );
+                })
               )}
             </tbody>
           </table>
