@@ -189,11 +189,50 @@
   padding: 1.5rem;
   border-radius: 12px;
   margin-bottom: 2rem;
+  position: relative;
 }
 
 .comments-section {
   background: linear-gradient(135deg, #DBEAFE, #BFDBFE);
   border-left: 4px solid #3B82F6;
+}
+
+.section-header-with-copy {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.section-header-with-copy h3 {
+  margin: 0;
+}
+
+.copy-btn {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #475569;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.copy-btn:hover {
+  background: white;
+  border-color: #3B82F6;
+  color: #3B82F6;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+}
+
+.copy-btn svg {
+  flex-shrink: 0;
 }
 
 .remarks-content,
@@ -202,6 +241,33 @@
   font-weight: 500;
   line-height: 1.6;
   white-space: pre-wrap;
+}
+
+/* RERC Code Section */
+.rerc-code-section {
+  background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+  border-left: 4px solid #10B981;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.rerc-code-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #065F46;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.rerc-code-value {
+  color: #059669;
+  font-weight: 700;
+  font-size: 1.25rem;
+  letter-spacing: 0.5px;
 }
 
 /* Section Cards */
@@ -257,6 +323,37 @@
   font-weight: 500;
   font-size: 0.95rem;
   word-break: break-word;
+}
+
+.field-value-with-copy {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.copy-btn-small {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #64748b;
+  padding: 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.copy-btn-small:hover {
+  background: white;
+  border-color: #3B82F6;
+  color: #3B82F6;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+}
+
+.copy-btn-small svg {
+  display: block;
 }
 
 .field-empty {

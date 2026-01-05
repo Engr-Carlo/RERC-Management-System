@@ -4,7 +4,7 @@ A web-based application for the Research Ethics Review Committee (RERC) to manag
 
 ## Features
 
-- 🔐 Secure authentication with role-based access (Admin/Reviewer)
+- 🔐 Secure authentication with role-based access (Admin/Reviewer) 
 - 📊 Real-time synchronization with Google Sheets
 - 📝 Application status management and commenting
 - 📜 Comprehensive audit logging of all changes

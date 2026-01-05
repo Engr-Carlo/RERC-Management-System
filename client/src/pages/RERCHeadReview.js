@@ -12,6 +12,14 @@ const RERCHeadReview = () => {
   const [error, setError] = useState('');
   const [updating, setUpdating] = useState(false);
 
+  const copyToClipboard = (text, label) => {
+    navigator.clipboard.writeText(text).then(() => {
+      alert(`${label} copied to clipboard!`);
+    }).catch(err => {
+      console.error('Failed to copy:', err);
+    });
+  };
+
   useEffect(() => {
     fetchApplication();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -181,16 +189,48 @@ const RERCHeadReview = () => {
         <div className="application-details">
           <h2>Application Information</h2>
           
+          {application['RERC Code for Revised Submission (Please specify the code assigned by the RERC Committee through your research college representative or research teacher for streamlined tracking of your submission); for New application, write NA'] && 
+           application['RERC Code for Revised Submission (Please specify the code assigned by the RERC Committee through your research college representative or research teacher for streamlined tracking of your submission); for New application, write NA'] !== 'NA' && (
+            <div className="rerc-code-section">
+              <div className="rerc-code-label">RERC Code</div>
+              <div className="rerc-code-value">{application['RERC Code for Revised Submission (Please specify the code assigned by the RERC Committee through your research college representative or research teacher for streamlined tracking of your submission); for New application, write NA']}</div>
+            </div>
+          )}
+          
           {application['Remarks'] && (
             <div className="remarks-section">
-              <h3>Reviewer Remarks</h3>
+              <div className="section-header-with-copy">
+                <h3>Reviewer Remarks</h3>
+                <button 
+                  className="copy-btn"
+                  onClick={() => copyToClipboard(application['Remarks'], 'Reviewer Remarks')}
+                  title="Copy to clipboard"
+                >
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                  </svg>
+                  Copy
+                </button>
+              </div>
               <div className="remarks-content">{application['Remarks']}</div>
             </div>
           )}
 
           {application['COMMENTS'] && (
             <div className="comments-section">
-              <h3>Committee Comments</h3>
+              <div className="section-header-with-copy">
+                <h3>Committee Comments</h3>
+                <button 
+                  className="copy-btn"
+                  onClick={() => copyToClipboard(application['COMMENTS'], 'Committee Comments')}
+                  title="Copy to clipboard"
+                >
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+                    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                  </svg>
+                  Copy
+                </button>
+              </div>
               <div className="comments-content">{application['COMMENTS']}</div>
             </div>
           )}
@@ -204,7 +244,20 @@ const RERCHeadReview = () => {
               </div>
               <div className="field-col">
                 <div className="field-label">Student Email</div>
-                <div className="field-value">{renderFieldValue('Active Email Address', application['Active Email Address'])}</div>
+                <div className="field-value-with-copy">
+                  <div className="field-value">{renderFieldValue('Active Email Address', application['Active Email Address'])}</div>
+                  {application['Active Email Address'] && (
+                    <button 
+                      className="copy-btn-small"
+                      onClick={() => copyToClipboard(application['Active Email Address'], 'Student Email')}
+                      title="Copy email"
+                    >
+                      <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                        <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
+                      </svg>
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
             <div className="field-row">
