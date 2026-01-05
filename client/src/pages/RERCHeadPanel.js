@@ -143,6 +143,7 @@ const RERCHeadPanel = () => {
                 <th>Research Title</th>
                 <th>College</th>
                 <th>Program</th>
+                <th>RERC Code</th>
                 <th>Reviewer Decision</th>
                 <th>Action</th>
               </tr>
@@ -150,7 +151,7 @@ const RERCHeadPanel = () => {
             <tbody>
               {filteredApplications.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="no-data">
+                  <td colSpan="8" className="no-data">
                     <div className="empty-state">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="64" height="64">
                         <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -161,13 +162,18 @@ const RERCHeadPanel = () => {
                   </td>
                 </tr>
               ) : (
-                filteredApplications.map((app, index) => (
+                filteredApplications.map((app, index) => {
+                  const rercCode = app['RERC Code for Revised Submission (Please specify the code assigned by the RERC Committee through your research college representative or research teacher for streamlined tracking of your submission); for New application, write NA'] || 'N/A';
+                  const displayRercCode = rercCode === 'NA' ? 'N/A' : rercCode;
+                  
+                  return (
                   <tr key={app.rowIndex} className="clickable-row">
                     <td>{index + 1}</td>
                     <td>{truncateText(app['Name of Lead Researcher (First Name Middle Initial. Last Name) '])}</td>
                     <td>{truncateText(app['APPROVED RESEARCH TITLE'], 60)}</td>
                     <td>{truncateText(app['College'])}</td>
                     <td>{truncateText(app['Program'])}</td>
+                    <td className="rerc-code-cell">{truncateText(displayRercCode, 30)}</td>
                     <td>{truncateText(app['Remarks'])}</td>
                     <td>
                       {authService.getCurrentUser()?.role === 'rerc_head' ? (
@@ -182,7 +188,8 @@ const RERCHeadPanel = () => {
                       )}
                     </td>
                   </tr>
-                ))
+                  );
+                })
               )}
             </tbody>
           </table>

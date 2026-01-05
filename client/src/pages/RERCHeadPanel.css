@@ -259,6 +259,12 @@
   font-weight: 500;
 }
 
+.rerc-code-cell {
+  color: #059669;
+  font-weight: 700;
+  background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
+}
+
 .clickable-row {
   cursor: pointer;
 }
