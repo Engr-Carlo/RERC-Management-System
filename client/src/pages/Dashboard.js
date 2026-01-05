@@ -40,12 +40,15 @@ const Dashboard = () => {
   const filterApplications = () => {
     let filtered = applications;
 
-    // Filter OUT applications that have remarks/comments (those are in For Final Review)
-    filtered = filtered.filter(app => {
-      const remarks = app['Remarks'] || '';
-      const comments = app['Comments'] || '';
-      return !remarks.trim() && !comments.trim();
-    });
+    // Only filter OUT applications with remarks/comments when NOT viewing "all"
+    // When viewing "all", show everything including processed applications
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(app => {
+        const remarks = app['Remarks'] || '';
+        const comments = app['Comments'] || '';
+        return !remarks.trim() && !comments.trim();
+      });
+    }
 
     // Filter by search term
     if (searchTerm) {
