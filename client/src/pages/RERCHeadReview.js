@@ -193,6 +193,13 @@ const RERCHeadReview = () => {
         <div className="application-details">
           <h2>Application Information</h2>
           
+          {application['Remarks'] && (
+            <div className="remarks-section">
+              <h3>Reviewer Remarks</h3>
+              <div className="remarks-content">{application['Remarks']}</div>
+            </div>
+          )}
+          
           {application['RERC Code for Revised Submission (Please specify the code assigned by the RERC Committee through your research college representative or research teacher for streamlined tracking of your submission); for New application, write NA'] && 
            application['RERC Code for Revised Submission (Please specify the code assigned by the RERC Committee through your research college representative or research teacher for streamlined tracking of your submission); for New application, write NA'] !== 'NA' && (
             <div className="rerc-code-section">
@@ -210,25 +217,6 @@ const RERCHeadReview = () => {
                 </button>
               </div>
               <div className="rerc-code-value">{application['RERC Code for Revised Submission (Please specify the code assigned by the RERC Committee through your research college representative or research teacher for streamlined tracking of your submission); for New application, write NA']}</div>
-            </div>
-          )}
-          
-          {application['Remarks'] && (
-            <div className="remarks-section">
-              <div className="section-header-with-copy">
-                <h3>Reviewer Remarks</h3>
-                <button 
-                  className="copy-btn"
-                  onClick={() => copyToClipboard(application['Remarks'], 'Reviewer Remarks')}
-                  title="Copy to clipboard"
-                >
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
-                    <path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/>
-                  </svg>
-                  Copy
-                </button>
-              </div>
-              <div className="remarks-content">{application['Remarks']}</div>
             </div>
           )}
 
