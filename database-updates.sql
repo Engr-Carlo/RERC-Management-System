@@ -11,3 +11,7 @@ CREATE TABLE IF NOT EXISTS reviewer_programs (
 
 -- Create index for faster lookups
 CREATE INDEX IF NOT EXISTS idx_reviewer_programs_user_id ON reviewer_programs(user_id);
+
+-- Add last_active_at column for online presence tracking
+-- Run this if the column does not already exist:
+ALTER TABLE users ADD COLUMN IF NOT EXISTS last_active_at TIMESTAMP;

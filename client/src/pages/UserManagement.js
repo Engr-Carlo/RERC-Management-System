@@ -18,9 +18,18 @@ const UserManagement = () => {
   const [error, setError] = useState('');
   const currentUser = authService.getCurrentUser();
 
+  // A user is considered online if their last heartbeat was within 5 minutes
+  const isOnline = (lastActiveAt) => {
+    if (!lastActiveAt) return false;
+    return (Date.now() - new Date(lastActiveAt).getTime()) < 5 * 60 * 1000;
+  };
+
   useEffect(() => {
     fetchUsers();
     fetchPrograms();
+    // Refresh users list every 30 s so online status stays up to date
+    const refreshTimer = setInterval(fetchUsers, 30000);
+    return () => clearInterval(refreshTimer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -185,6 +194,7 @@ const UserManagement = () => {
             <thead>
               <tr>
                 <th>#</th>
+                <th>Status</th>
                 <th>Display Name</th>
                 <th>Email (Login)</th>
                 <th>Role</th>
@@ -197,6 +207,12 @@ const UserManagement = () => {
               {users.map((user, index) => (
                 <tr key={user.id}>
                   <td>{index + 1}</td>
+                  <td>
+                    <span
+                      className={`online-dot ${isOnline(user.last_active_at) ? 'online-dot--active' : 'online-dot--inactive'}`}
+                      title={isOnline(user.last_active_at) ? 'Online' : 'Offline'}
+                    />
+                  </td>
                   <td>
                     {user.username}
                     {user.id === currentUser.id && <span className="current-user-badge">You</span>}

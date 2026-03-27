@@ -194,7 +194,7 @@ const RERCHeadReview = () => {
           <h2>Application Information</h2>
           
           {application['Remarks'] && (
-            <div className="remarks-section">
+            <div className="remarks-section">  
               <h3>Reviewer Remarks</h3>
               <div className="remarks-content">{application['Remarks']}</div>
             </div>

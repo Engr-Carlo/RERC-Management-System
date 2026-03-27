@@ -398,6 +398,31 @@
   font-style: italic;
 }
 
+/* Online presence indicator */
+.online-dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+
+.online-dot--active {
+  background: #4caf50;
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.3);
+  animation: pulse-green 2s infinite;
+}
+
+.online-dot--inactive {
+  background: #bdbdbd;
+}
+
+@keyframes pulse-green {
+  0%   { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.5); }
+  70%  { box-shadow: 0 0 0 6px rgba(76, 175, 80, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+}
+
 .help-text {
   color: var(--text-secondary);
   font-size: 0.9rem;

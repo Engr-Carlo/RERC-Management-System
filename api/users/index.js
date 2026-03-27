@@ -93,7 +93,7 @@ module.exports = async (req, res) => {
   if (req.method === 'GET') {
     try {
       const result = await sql`
-        SELECT id, username, email, role, created_at FROM users
+        SELECT id, username, email, role, created_at, last_active_at FROM users
       `;
       res.status(200).json(result);
     } catch (error) {

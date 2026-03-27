@@ -83,5 +83,39 @@ module.exports = async (req, res) => {
     }
   }
 
+  // POST /auth?action=heartbeat - Update last active timestamp
+  if (req.method === 'POST' && action === 'heartbeat') {
+    const authResult = authenticateToken(req);
+    if (authResult.error) {
+      return res.status(authResult.status).json({ error: authResult.error });
+    }
+
+    try {
+      await sql`
+        UPDATE users SET last_active_at = NOW() WHERE id = ${authResult.user.userId}
+      `;
+      return res.status(200).json({ success: true });
+    } catch (error) {
+      console.error('Heartbeat error:', error);
+      return res.status(500).json({ error: 'Server error' });
+    }
+  }
+
+  // POST /auth?action=logout - Mark user as offline
+  if (req.method === 'POST' && action === 'logout') {
+    const authResult = authenticateToken(req);
+    if (!authResult.error) {
+      try {
+        // Set last_active_at far in the past so they appear offline immediately
+        await sql`
+          UPDATE users SET last_active_at = NOW() - INTERVAL '10 minutes' WHERE id = ${authResult.user.userId}
+        `;
+      } catch {
+        // Non-critical — ignore
+      }
+    }
+    return res.status(200).json({ success: true });
+  }
+
   return res.status(400).json({ error: 'Invalid action. Use ?action=login or ?action=me' });
 };

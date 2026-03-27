@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
@@ -13,6 +13,15 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { authService } from './services/api';
 
 function App() {
+  useEffect(() => {
+    // On page load, if the user has a valid session resume the heartbeat.
+    // isAuthenticated() already clears an expired token, so this only
+    // fires when the token is genuinely still valid.
+    if (authService.isAuthenticated()) {
+      authService.startHeartbeat();
+    }
+  }, []);
+
   return (
     <Router>
       <Routes>

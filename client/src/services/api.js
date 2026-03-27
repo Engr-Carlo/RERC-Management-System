@@ -7,6 +7,29 @@ const API_URL = '/api';
 const INACTIVITY_TIMEOUT = 60 * 60 * 1000; // 1 hour in milliseconds
 let inactivityTimer = null;
 
+// Heartbeat interval (every 2 minutes)
+const HEARTBEAT_INTERVAL = 2 * 60 * 1000;
+let heartbeatTimer = null;
+
+// Check if a JWT token is expired (without verifying signature)
+const isTokenExpired = (token) => {
+  if (!token) return true;
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    // exp is in seconds, Date.now() is in ms
+    return payload.exp * 1000 < Date.now();
+  } catch {
+    return true;
+  }
+};
+
+const performLogout = () => {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+  if (inactivityTimer) { clearTimeout(inactivityTimer); inactivityTimer = null; }
+  if (heartbeatTimer) { clearInterval(heartbeatTimer); heartbeatTimer = null; }
+};
+
 const resetInactivityTimer = () => {
   if (inactivityTimer) {
     clearTimeout(inactivityTimer);
@@ -16,7 +39,7 @@ const resetInactivityTimer = () => {
   const token = localStorage.getItem('token');
   if (token) {
     inactivityTimer = setTimeout(() => {
-      authService.logout();
+      performLogout();
       window.location.href = '/';
     }, INACTIVITY_TIMEOUT);
   }
@@ -37,14 +60,36 @@ const api = axios.create({
   baseURL: API_URL,
 });
 
-// Add token to requests
+// Add token to requests — also check expiry before every call
 api.interceptors.request.use((config) => {
   const token = getToken();
   if (token) {
+    if (isTokenExpired(token)) {
+      // Token is expired — clear session and redirect to login
+      performLogout();
+      window.location.href = '/login';
+      return Promise.reject(new Error('Session expired'));
+    }
     config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
+
+// Handle 401/403 responses — server rejected the token
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+      const token = getToken();
+      if (token) {
+        // Server rejected token — force fresh login
+        performLogout();
+        window.location.href = '/login';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 // Auth services
 export const authService = {
@@ -54,17 +99,19 @@ export const authService = {
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       resetInactivityTimer(); // Start inactivity timer
+      authService.startHeartbeat(); // Start heartbeat
     }
     return response.data;
   },
 
   logout: () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    if (inactivityTimer) {
-      clearTimeout(inactivityTimer);
-      inactivityTimer = null;
+    // Send a final heartbeat to mark offline before clearing token
+    const token = getToken();
+    if (token) {
+      // Fire-and-forget — don't await so logout is instant
+      api.post('/auth?action=logout').catch(() => {});
     }
+    performLogout();
   },
 
   getCurrentUser: () => {
@@ -73,12 +120,40 @@ export const authService = {
   },
 
   isAuthenticated: () => {
-    return !!getToken();
+    const token = getToken();
+    if (!token) return false;
+    if (isTokenExpired(token)) {
+      performLogout();
+      return false;
+    }
+    return true;
   },
 
   getMe: async () => {
     const response = await api.get('/auth?action=me');
     return response.data;
+  },
+
+  sendHeartbeat: async () => {
+    try {
+      await api.post('/auth?action=heartbeat');
+    } catch {
+      // Ignore heartbeat errors
+    }
+  },
+
+  startHeartbeat: () => {
+    if (heartbeatTimer) clearInterval(heartbeatTimer);
+    // Send immediate heartbeat on login
+    authService.sendHeartbeat();
+    heartbeatTimer = setInterval(() => {
+      if (getToken() && !isTokenExpired(getToken())) {
+        authService.sendHeartbeat();
+      } else {
+        clearInterval(heartbeatTimer);
+        heartbeatTimer = null;
+      }
+    }, HEARTBEAT_INTERVAL);
   }
 };
 
