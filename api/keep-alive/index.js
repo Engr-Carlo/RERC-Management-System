@@ -1,8 +1,21 @@
 const { sql } = require('../_lib/db');
 
 module.exports = async (req, res) => {
-  // Only allow GET and HEAD (Vercel Cron sends GET)
-  if (req.method !== 'GET' && req.method !== 'HEAD') {
+  // Handle CORS for client-side pings
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization'
+  );
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
+  // Allow GET (Vercel Cron) and POST (client wake-up)
+  if (req.method !== 'GET' && req.method !== 'POST' && req.method !== 'HEAD') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 

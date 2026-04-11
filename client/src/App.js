@@ -14,6 +14,11 @@ import { authService } from './services/api';
 
 function App() {
   useEffect(() => {
+    // Ping the keep-alive endpoint every time the app loads.
+    // This wakes up Supabase if it has been paused due to inactivity,
+    // even before the user logs in.
+    fetch('/api/keep-alive', { method: 'POST' }).catch(() => {});
+
     // On page load, if the user has a valid session resume the heartbeat.
     // isAuthenticated() already clears an expired token, so this only
     // fires when the token is genuinely still valid.
