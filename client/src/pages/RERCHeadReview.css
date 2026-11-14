@@ -132,12 +132,12 @@
 }
 
 .decline-button {
-  background: linear-gradient(135deg, #EF4444, #DC2626);
+  background: linear-gradient(135deg, #8a4b1d, #6c3a14);
   color: white;
 }
 
 .approve-button {
-  background: linear-gradient(135deg, #10B981, #059669);
+  background: linear-gradient(135deg, #1e4d8c, #173f73);
   color: white;
 }
 

@@ -1,0 +1,497 @@
+/* Unified button & page-header system. Loaded last so it overrides per-page styles. */
+:root {
+  --btn-radius: 6px;
+  --btn-height: 36px;
+  --c-primary: #1e4d8c;
+  --c-primary-hover: #173f73;
+  --c-success: #1e4d8c;
+  --c-success-hover: #173f73;
+  --c-danger: #8a4b1d;
+  --c-danger-hover: #6c3a14;
+  --c-line: #d0d5dd;
+  --c-ink: #344054;
+  --c-head-approved: #9f1d1b;
+  --c-head-approved-hover: #7f1717;
+}
+
+/* ---------- Base button ---------- */
+.btn,
+.refresh-button,
+.back-button,
+.history-toggle-button,
+.password-button,
+.add-button,
+.view-button,
+.review-button,
+.programs-button,
+.delete-button,
+.cancel-btn,
+.submit-btn,
+.save-button,
+.cancel-button,
+.copy-btn,
+.copy-btn-rerc,
+.decision-button,
+.btn-primary,
+.btn-secondary,
+.btn-danger,
+.error-container button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: var(--btn-height);
+  padding: 0 1rem;
+  border-radius: var(--btn-radius);
+  border: 1px solid var(--c-line);
+  background: #fff;
+  background-image: none;
+  color: var(--c-ink);
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.05);
+  transform: none;
+  transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+
+.btn:hover:not(:disabled),
+.refresh-button:hover:not(:disabled),
+.back-button:hover:not(:disabled),
+.history-toggle-button:hover:not(:disabled),
+.password-button:hover:not(:disabled),
+.view-button:hover:not(:disabled),
+.programs-button:hover:not(:disabled),
+.cancel-btn:hover:not(:disabled),
+.cancel-button:hover:not(:disabled),
+.copy-btn:hover:not(:disabled),
+.copy-btn-rerc:hover:not(:disabled),
+.btn-secondary:hover:not(:disabled) {
+  background: #f9fafb;
+  border-color: #98a2b3;
+  color: #1d2939;
+  transform: none;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.08);
+}
+
+.btn:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--c-primary);
+  outline-offset: 2px;
+}
+
+.btn:disabled,
+.btn-primary:disabled,
+.btn-secondary:disabled,
+.decision-button:disabled,
+.submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.refresh-button svg,
+.copy-btn svg,
+.copy-btn-rerc svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ---------- Primary ---------- */
+.btn-primary,
+.add-button,
+.review-button,
+.submit-btn,
+.save-button,
+.error-container button {
+  background: var(--c-primary);
+  border-color: var(--c-primary);
+  color: #fff;
+}
+
+.btn-primary:hover:not(:disabled),
+.add-button:hover:not(:disabled),
+.review-button:hover:not(:disabled),
+.submit-btn:hover:not(:disabled),
+.save-button:hover:not(:disabled),
+.error-container button:hover:not(:disabled) {
+  background: var(--c-primary-hover);
+  border-color: var(--c-primary-hover);
+  color: #fff;
+  transform: none;
+}
+
+/* ---------- Approval / revision colors ---------- */
+.btn-success,
+.approve-button {
+  background: var(--c-success);
+  border-color: var(--c-success);
+  color: #fff;
+}
+
+.btn-success:hover:not(:disabled),
+.approve-button:hover:not(:disabled) {
+  background: var(--c-success-hover);
+  border-color: var(--c-success-hover);
+  transform: none;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.1);
+}
+
+.btn-danger,
+.decline-button {
+  background: linear-gradient(135deg, #8a4b1d, #6c3a14);
+  border-color: #8a4b1d;
+  color: #fff;
+}
+
+.btn-danger:hover:not(:disabled),
+.decline-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #7a3d17, #5c2f13);
+  border-color: #7a3d17;
+  color: #fff;
+  transform: none;
+}
+
+.delete-button {
+  background: #fff;
+  border-color: #fda29b;
+  color: var(--c-danger);
+}
+
+.delete-button:hover:not(:disabled) {
+  background: #fef3f2;
+  border-color: var(--c-danger);
+  transform: none;
+}
+
+/* ---------- Compact (table row) buttons ---------- */
+.view-button,
+.review-button,
+.programs-button,
+.delete-button,
+.copy-btn,
+.copy-btn-rerc,
+.edit-icon-button {
+  min-height: 30px;
+  padding: 0 0.75rem;
+  font-size: 0.8125rem;
+}
+
+.view-button {
+  color: var(--c-primary);
+  border-color: #b2c7e6;
+  background: #fff;
+}
+
+.view-button:hover:not(:disabled) {
+  background: #eff4fb;
+  border-color: var(--c-primary);
+  color: var(--c-primary-hover);
+}
+
+.review-button {
+  color: #fff;
+}
+
+.edit-icon-button {
+  border: 1px solid var(--c-line);
+  border-radius: var(--btn-radius);
+  background: #fff;
+  color: var(--c-primary);
+  font-weight: 600;
+  transform: none;
+}
+
+.edit-icon-button:hover {
+  transform: none;
+  background: #eff4fb;
+  border-color: var(--c-primary);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+
+/* ---------- Back link ---------- */
+.back-button {
+  min-height: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  color: var(--c-primary);
+  font-size: 0.875rem;
+}
+
+.back-button:hover:not(:disabled) {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: var(--c-primary-hover);
+  text-decoration: underline;
+}
+
+/* ---------- Page headers ---------- */
+.dashboard-header,
+.panel-header,
+.users-header,
+.audit-header,
+.detail-header,
+.review-header {
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #e4e7ec;
+  gap: 1rem;
+}
+
+.dashboard-header h1,
+.panel-header h1,
+.users-header h1,
+.detail-header h1,
+.review-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #101828;
+  margin: 0;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Detail page: back link on its own line, title + actions below */
+.detail-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  row-gap: 0.75rem;
+}
+
+.detail-header .back-button {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+
+.detail-header h1 {
+  flex: none;
+}
+
+.review-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.review-header h1 {
+  margin: 0;
+}
+
+/* ---------- Section cards ---------- */
+.detail-content > div {
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  padding: 1.5rem;
+}
+
+.detail-content h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #101828;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e4e7ec;
+}
+
+.field-value-container {
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.field-value-container .field-value {
+  flex: 1;
+}
+
+.field-item label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #667085;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.cancel-button {
+  background: #fff;
+  color: var(--c-ink);
+}
+
+/* ---------- Reviewer decision panel ---------- */
+.decision-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.decision-panel textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--c-line);
+  border-radius: var(--btn-radius);
+  font-family: inherit;
+  font-size: 0.9rem;
+  resize: vertical;
+}
+
+.decision-panel textarea:focus {
+  outline: none;
+  border-color: var(--c-primary);
+  box-shadow: 0 0 0 3px rgba(30, 77, 140, 0.15);
+}
+
+.decision-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding-top: 0.75rem;
+  border-top: 1px solid #eaecf0;
+}
+
+.decision-hint {
+  font-size: 0.8125rem;
+  color: #667085;
+}
+
+.decision-footer .header-actions {
+  margin-left: auto;
+}
+
+/* ---------- RERC Head review decision buttons ---------- */
+.decision-banner {
+  background: #eff4fb;
+  border: 1px solid #b2c7e6;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  color: #1d3f72;
+}
+
+.decision-banner svg {
+  width: 20px;
+  height: 20px;
+}
+
+.decision-banner strong {
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.decision-banner p {
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+.decision-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.decision-button {
+  padding: 0 1.25rem;
+  min-height: 40px;
+  overflow: visible;
+}
+
+.decision-button::before {
+  display: none;
+}
+
+.decision-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+.decision-button .button-title {
+  display: inline;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.decision-button .button-subtitle {
+  display: none;
+}
+
+.decision-button > div {
+  display: flex;
+  align-items: center;
+}
+
+.decision-button:hover:not(:disabled) {
+  transform: none;
+}
+
+/* ---------- Pagination ---------- */
+.page-btn {
+  min-height: 32px;
+  min-width: 32px;
+  padding: 0 0.6rem;
+  border: 1px solid var(--c-line);
+  border-radius: var(--btn-radius);
+  font-size: 0.8125rem;
+  box-shadow: none;
+}
+
+.page-btn--active,
+.page-btn--active:hover {
+  background: var(--c-primary);
+  border-color: var(--c-primary);
+  color: #fff;
+  box-shadow: none;
+}
+
+/* ---------- Modal footers ---------- */
+.modal-actions,
+.modal-footer,
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .decision-buttons,
+  .decision-footer .header-actions {
+    width: 100%;
+  }
+
+  .decision-buttons .decision-button,
+  .decision-footer .btn {
+    flex: 1;
+  }
+
+  .detail-header {
+    grid-template-columns: 1fr;
+  }
+}

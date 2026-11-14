@@ -169,21 +169,21 @@
   background: rgba(255, 255, 255, 0.5);
 }
 
-/* Color Themes for Each Card - Professional Blue System */
+/* Color Themes for Each Card */
 .stat-total {
   background: linear-gradient(135deg, #1e4d8c 0%, #0f2a4a 100%);
 }
 
 .stat-pending {
-  background: linear-gradient(135deg, #0e7490 0%, #155e75 100%);
+  background: linear-gradient(135deg, #667085 0%, #475467 100%);
 }
 
 .stat-approved {
-  background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  background: linear-gradient(135deg, #1e4d8c 0%, #173f73 100%);
 }
 
 .stat-revision {
-  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  background: linear-gradient(135deg, #8a4b1d 0%, #6c3a14 100%);
 }
 
 /* Large Charts Section */
@@ -402,27 +402,28 @@
 }
 
 .status-approved {
-  background: linear-gradient(135deg, #D1FAE5, #A7F3D0);
-  color: #065F46;
-  border: 1px solid #6EE7B7;
+  background: linear-gradient(135deg, #dfeaf9, #cfe0ff);
+  color: #1e4d8c;
+  border: 1px solid #9bb9e6;
 }
 
 .status-pending {
-  background: linear-gradient(135deg, #FEF3C7, #FDE68A);
-  color: #92400E;
-  border: 1px solid #FCD34D;
+  background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+  color: #475467;
+  border: 1px solid #d0d5dd;
 }
 
-.status-rejected {
-  background: linear-gradient(135deg, #FEE2E2, #FECACA);
-  color: #991B1B;
-  border: 1px solid #FCA5A5;
-}
-
+.status-rejected,
 .status-revision {
-  background: linear-gradient(135deg, #DBEAFE, #BFDBFE);
-  color: #1E40AF;
-  border: 1px solid #93C5FD;
+  background: linear-gradient(135deg, #f8e7d9, #efc9a6);
+  color: #8a4b1d;
+  border: 1px solid #d99d6c;
+}
+
+.status-head-approved {
+  background: linear-gradient(135deg, #fdecec, #f7d3d3);
+  color: #9f1d1b;
+  border: 1px solid #dda0a0;
 }
 
 /* View Button */

@@ -270,7 +270,7 @@ const ApplicationDetail = () => {
           </button>
           <h1>Application Details</h1>
           <div className="header-actions">
-            <button onClick={() => setShowHistory(!showHistory)} className="history-toggle-button">
+            <button onClick={() => setShowHistory(!showHistory)} className="btn">
               {showHistory ? 'Hide History' : 'Show History'}
             </button>
           </div>
@@ -384,32 +384,36 @@ const ApplicationDetail = () => {
                 {renderFieldValue('COMMENTS', getCommentsValue(application))}
               </div>
               <div className="field-item full-width">
-                <label>Reviewer Decision:</label>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                <label>Reviewer Decision</label>
+                <div className="decision-panel">
                   <textarea
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
-                    placeholder="Write a comment here if this should go back for resubmission..."
+                    placeholder="Enter a comment to return this application for resubmission."
                     rows="3"
-                    style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
                   />
-                  <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-                    <button
-                      onClick={() => handleCommentSubmit('approve')}
-                      className="btn-primary"
-                      disabled={updating}
-                      style={{ padding: '8px 16px', whiteSpace: 'nowrap' }}
-                    >
-                      Approve
-                    </button>
-                    <button
-                      onClick={() => handleCommentSubmit('resubmission')}
-                      className="btn-secondary"
-                      disabled={updating || !newComment.trim()}
-                      style={{ padding: '8px 16px', whiteSpace: 'nowrap' }}
-                    >
-                      For Resubmission
-                    </button>
+                  <div className="decision-footer">
+                    <span className="decision-hint">
+                      {newComment.trim()
+                        ? 'A comment is entered: this will be returned for resubmission.'
+                        : 'Leave the comment empty to approve.'}
+                    </span>
+                    <div className="header-actions">
+                      <button
+                        onClick={() => handleCommentSubmit('resubmission')}
+                        className="btn btn-danger"
+                        disabled={updating || !newComment.trim()}
+                      >
+                        Return for Resubmission
+                      </button>
+                      <button
+                        onClick={() => handleCommentSubmit('approve')}
+                        className="btn btn-success"
+                        disabled={updating || !!newComment.trim()}
+                      >
+                        Approve
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

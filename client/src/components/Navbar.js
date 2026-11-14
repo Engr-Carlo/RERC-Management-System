@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { authService } from '../services/api';
 import './Navbar.css';
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   const user = authService.getCurrentUser();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -17,6 +18,9 @@ const Navbar = () => {
     setMenuOpen(false);
     navigate(path);
   };
+
+  const linkClass = (...paths) =>
+    `nav-link${paths.some(p => pathname.startsWith(p)) ? ' nav-link--active' : ''}`;
 
   return (
     <nav className="navbar">
@@ -35,22 +39,22 @@ const Navbar = () => {
         </button>
         
         <div className={`navbar-menu${menuOpen ? ' navbar-menu--open' : ''}`}>
-          <button className="nav-button" onClick={() => navTo('/dashboard')}>
+          <button className={linkClass('/dashboard', '/application')} onClick={() => navTo('/dashboard')}>
             Dashboard
           </button>
-          
+
           {(user?.role === 'rerc_head' || user?.role === 'admin') && (
-            <button className="nav-button" onClick={() => navTo('/rerc-head-panel')}>
+            <button className={linkClass('/rerc-head')} onClick={() => navTo('/rerc-head-panel')}>
               For Final Review
             </button>
           )}
-          
-          <button className="nav-button" onClick={() => navTo('/audit-logs')}>
+
+          <button className={linkClass('/audit-logs')} onClick={() => navTo('/audit-logs')}>
             Audit Logs
           </button>
-          
+
           {user?.role === 'admin' && (
-            <button className="nav-button" onClick={() => navTo('/users')}>
+            <button className={linkClass('/users')} onClick={() => navTo('/users')}>
               Users
             </button>
           )}
@@ -61,11 +65,11 @@ const Navbar = () => {
             <span className="user-name">{user?.username}</span>
             <span className="user-role">{user?.role}</span>
           </span>
-          <button className="nav-button" onClick={() => navTo('/profile')}>
+          <button className={`${linkClass('/profile')} nav-link--user`} onClick={() => navTo('/profile')}>
             Profile
           </button>
           <button className="logout-button" onClick={handleLogout}>
-            Logout
+            Sign out
           </button>
         </div>
       </div>
