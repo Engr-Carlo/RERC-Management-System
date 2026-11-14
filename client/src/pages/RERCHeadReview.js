@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { applicationService } from '../services/api';
+import { useToast } from '../components/Toast';
+import { useConfirm } from '../components/ConfirmModal';
 import './RERCHeadReview.css';
 
 const RERCHeadReview = () => {
@@ -12,6 +14,10 @@ const RERCHeadReview = () => {
   const [error, setError] = useState('');
   const [updating, setUpdating] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '' });
+  const { showToast } = useToast();
+  const confirm = useConfirm();
+
+  const getSubmissionTimestamp = (applicationItem) => applicationItem?.Timestamp || applicationItem?.Date || '';
 
   const copyToClipboard = (text, label) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -51,18 +57,17 @@ const RERCHeadReview = () => {
     
     const statusText = `review results forwarded via email, ${currentDate}`;
     
-    if (!window.confirm('Are you sure you want to DECLINE this application? This will send it back for resubmission.')) {
-      return;
-    }
+    const ok = await confirm('Are you sure you want to DECLINE this application? This will send it back for resubmission.');
+    if (!ok) return;
 
     try {
       setUpdating(true);
       await applicationService.updateStatus(rowIndex, statusText, 'resubmission');
       
-      alert('Application declined successfully! Status updated.');
+      showToast('Application declined. Status updated.', 'success');
       navigate('/rerc-head-panel');
     } catch (err) {
-      alert('Failed to update status. Please try again.');
+      showToast('Failed to update status. Please try again.', 'error');
       console.error(err);
     } finally {
       setUpdating(false);
@@ -78,18 +83,17 @@ const RERCHeadReview = () => {
     
     const statusText = `completed; clearance release ${currentDate}`;
     
-    if (!window.confirm('Are you sure you want to APPROVE this application? This will mark it as completed.')) {
-      return;
-    }
+    const ok = await confirm('Are you sure you want to APPROVE this application? This will mark it as completed.');
+    if (!ok) return;
 
     try {
       setUpdating(true);
       await applicationService.updateStatus(rowIndex, statusText, 'approved');
       
-      alert('Application approved successfully! Status updated to completed.');
+      showToast('Application approved! Status updated to completed.', 'success');
       navigate('/rerc-head-panel');
     } catch (err) {
-      alert('Failed to update status. Please try again.');
+      showToast('Failed to update status. Please try again.', 'error');
       console.error(err);
     } finally {
       setUpdating(false);
@@ -307,7 +311,7 @@ const RERCHeadReview = () => {
               </div>
               <div className="field-col">
                 <div className="field-label">Submission Date</div>
-                <div className="field-value">{renderFieldValue('Date', application['Date'])}</div>
+                <div className="field-value">{renderFieldValue('Date', getSubmissionTimestamp(application))}</div>
               </div>
             </div>
           </div>

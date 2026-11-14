@@ -385,3 +385,22 @@
     align-items: flex-start;
   }
 }
+
+/* ---- Error Banner ---- */
+.error-banner {
+  background: #fef2f2;
+  border: 1.5px solid #fca5a5;
+  color: #dc2626;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* ---- No History ---- */
+.no-history {
+  text-align: center;
+  color: #94a3b8;
+  padding: 2rem;
+  font-style: italic;
+}

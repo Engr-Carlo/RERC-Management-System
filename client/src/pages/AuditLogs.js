@@ -1,32 +1,43 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Navbar from '../components/Navbar';
 import { auditService } from '../services/api';
 import './AuditLogs.css';
+
+const ITEMS_PER_PAGE = 25;
 
 const AuditLogs = () => {
   const [logs, setLogs] = useState([]);
   const [filteredLogs, setFilteredLogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [actionFilter, setActionFilter] = useState('all');
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     fetchLogs();
   }, []);
 
+  // Debounced filter: waits 300 ms after last change before filtering
   useEffect(() => {
-    filterLogs();
+    const timer = setTimeout(() => {
+      filterLogs();
+      setCurrentPage(1);
+    }, 300);
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, actionFilter, logs]);
 
   const fetchLogs = async () => {
     try {
       setLoading(true);
+      setError('');
       const data = await auditService.getAll(200);
       setLogs(data);
       setFilteredLogs(data);
     } catch (err) {
       console.error('Failed to load audit logs:', err);
+      setError('Failed to load audit logs. Please try refreshing.');
     } finally {
       setLoading(false);
     }
@@ -49,6 +60,12 @@ const AuditLogs = () => {
 
     setFilteredLogs(filtered);
   };
+
+  const totalPages = Math.ceil(filteredLogs.length / ITEMS_PER_PAGE);
+  const paginatedLogs = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredLogs.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredLogs, currentPage]);
 
   const formatDate = (timestamp) => {
     return new Date(timestamp).toLocaleString();
@@ -82,6 +99,12 @@ const AuditLogs = () => {
           </button>
         </div>
 
+        {error && (
+          <div className="error-banner" style={{ marginBottom: '1.25rem' }}>
+            {error}
+          </div>
+        )}
+
         <div className="filters-section">
           <div className="search-box">
             <input
@@ -110,7 +133,7 @@ const AuditLogs = () => {
           {filteredLogs.length === 0 ? (
             <div className="no-data">No audit logs found</div>
           ) : (
-            filteredLogs.map((log) => (
+            paginatedLogs.map((log) => (
               <div key={log.id} className="log-item">
                 <div className="log-header">
                   <div className="log-user">
@@ -155,6 +178,35 @@ const AuditLogs = () => {
             ))
           )}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="pagination">
+            <button
+              className="page-btn"
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              ← Prev
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+              <button
+                key={page}
+                className={`page-btn${currentPage === page ? ' page-btn--active' : ''}`}
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              className="page-btn"
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+            >
+              Next →
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -96,7 +96,12 @@ const Profile = () => {
       <Navbar />
       <div className="profile-container">
         <div className="profile-card">
-          <h1>My Profile</h1>
+          <div className="profile-avatar">
+            <span className="profile-avatar-initials">
+              {user.username ? user.username.charAt(0).toUpperCase() : '?'}
+            </span>
+          </div>
+          <h1>{user.username}</h1>
           
           <div className="profile-info">
             <div className="info-row">

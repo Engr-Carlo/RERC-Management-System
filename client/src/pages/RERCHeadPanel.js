@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { applicationService, authService } from '../services/api';
 import './RERCHeadPanel.css';
+
+const ITEMS_PER_PAGE = 10;
 
 const RERCHeadPanel = () => {
   const [applications, setApplications] = useState([]);
@@ -10,6 +12,7 @@ const RERCHeadPanel = () => {
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredApplications, setFilteredApplications] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,6 +21,7 @@ const RERCHeadPanel = () => {
 
   useEffect(() => {
     filterApplications();
+    setCurrentPage(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, applications]);
 
@@ -59,6 +63,12 @@ const RERCHeadPanel = () => {
       setFilteredApplications(applications);
     }
   };
+
+  const totalPages = Math.ceil(filteredApplications.length / ITEMS_PER_PAGE);
+  const paginatedApplications = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredApplications.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredApplications, currentPage]);
 
   const handleRowClick = (rowIndex) => {
     navigate(`/rerc-head-review/${rowIndex}`);
@@ -162,13 +172,13 @@ const RERCHeadPanel = () => {
                   </td>
                 </tr>
               ) : (
-                filteredApplications.map((app, index) => {
+                paginatedApplications.map((app, index) => {
                   const rercCode = app['RERC Code for Revised Submission (Please specify the code assigned by the RERC Committee through your research college representative or research teacher for streamlined tracking of your submission); for New application, write NA'] || 'N/A';
                   const displayRercCode = rercCode === 'NA' ? 'N/A' : rercCode;
                   
                   return (
                   <tr key={app.rowIndex} className="clickable-row">
-                    <td>{index + 1}</td>
+                    <td>{(currentPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
                     <td>{truncateText(app['Name of Lead Researcher (First Name Middle Initial. Last Name) '])}</td>
                     <td>{truncateText(app['APPROVED RESEARCH TITLE'], 60)}</td>
                     <td>{truncateText(app['College'])}</td>
@@ -194,6 +204,35 @@ const RERCHeadPanel = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="pagination">
+            <button
+              className="page-btn"
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              ← Prev
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+              <button
+                key={page}
+                className={`page-btn${currentPage === page ? ' page-btn--active' : ''}`}
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              className="page-btn"
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+            >
+              Next →
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

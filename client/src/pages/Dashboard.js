@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import StatusBadge from '../components/StatusBadge';
 import { applicationService } from '../services/api';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import './Dashboard.css';
+
+const ITEMS_PER_PAGE = 10;
 
 const Dashboard = () => {
   const [applications, setApplications] = useState([]);
@@ -12,14 +15,20 @@ const Dashboard = () => {
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('pending');
+  const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchApplications();
   }, []);
 
+  // Debounced filter — waits 300 ms after last search/filter change
   useEffect(() => {
-    filterApplications();
+    const timer = setTimeout(() => {
+      filterApplications();
+      setCurrentPage(1);
+    }, 300);
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, statusFilter, applications]);
 
@@ -85,26 +94,15 @@ const Dashboard = () => {
     navigate(`/application/${rowIndex}`);
   };
 
-  const getStatusBadge = (status) => {
-    if (!status) return <span className="status-badge status-pending">Pending</span>;
-
-    const statusLower = status.toLowerCase();
-    if (statusLower.includes('approved')) {
-      return <span className="status-badge status-approved">Approved</span>;
-    } else if (statusLower.includes('reject')) {
-      return <span className="status-badge status-rejected">Rejected</span>;
-    } else if (statusLower.includes('revision')) {
-      return <span className="status-badge status-revision">Needs Revision</span>;
-    }
-    return <span className="status-badge status-pending">{status}</span>;
-  };
+  const getStatusBadge = (status) => <StatusBadge status={status} />;
+  const getSubmissionTimestamp = (app) => app?.Timestamp || app?.Date || '';
 
   const truncateText = (text, maxLength = 50) => {
     if (!text) return 'N/A';
     return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
   };
 
-  const getStatistics = () => {
+  const getStatistics = useMemo(() => {
     const total = applications.length;
     const pending = applications.filter(app => {
       const status = app['Research Ethics Clearance Application Status'] || '';
@@ -118,58 +116,48 @@ const Dashboard = () => {
       const status = app['Research Ethics Clearance Application Status'] || '';
       return status.toLowerCase().includes('review results forwarded');
     }).length;
-    
     return { total, pending, approved, needsRevision };
-  };
+  }, [applications]);
 
-  const getMonthlyData = () => {
+  const getMonthlyData = useMemo(() => {
     const monthCounts = {};
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    
     applications.forEach(app => {
-      const timestamp = app['Date'];
+      const timestamp = getSubmissionTimestamp(app);
       if (timestamp) {
         const date = new Date(timestamp);
-        // Check if date is valid
         if (!isNaN(date.getTime())) {
           const monthKey = `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
           monthCounts[monthKey] = (monthCounts[monthKey] || 0) + 1;
         }
       }
     });
-
     return Object.entries(monthCounts)
       .sort((a, b) => new Date(a[0]) - new Date(b[0]))
       .slice(-6)
       .map(([month, count]) => ({ month, applications: count }));
-  };
+  }, [applications]);
 
-  const getStatusData = () => {
-    const stats = getStatistics();
-    return [
-      { name: 'Pending', value: stats.pending, color: '#3B82F6' },
-      { name: 'Approved', value: stats.approved, color: '#10B981' },
-      { name: 'Needs Revision', value: stats.needsRevision, color: '#F59E0B' }
-    ].filter(item => item.value > 0);
-  };
+  const getStatusData = useMemo(() => [
+    { name: 'Pending', value: getStatistics.pending, color: '#3B82F6' },
+    { name: 'Approved', value: getStatistics.approved, color: '#10B981' },
+    { name: 'Needs Revision', value: getStatistics.needsRevision, color: '#F59E0B' }
+  ].filter(item => item.value > 0), [getStatistics]);
 
-  const getTrendData = () => {
-    const last12Months = [];
+  const getTrendData = useMemo(() => {
     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const now = new Date();
-    
+    const last6Months = [];
     for (let i = 5; i >= 0; i--) {
       const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const monthKey = `${monthNames[date.getMonth()]}`;
-      
+      const monthKey = monthNames[date.getMonth()];
       const monthApps = applications.filter(app => {
-        if (!app['Date']) return false;
-        const appDate = new Date(app['Date']);
-        // Check if date is valid
+        const submissionTimestamp = getSubmissionTimestamp(app);
+        if (!submissionTimestamp) return false;
+        const appDate = new Date(submissionTimestamp);
         if (isNaN(appDate.getTime())) return false;
         return appDate.getMonth() === date.getMonth() && appDate.getFullYear() === date.getFullYear();
       });
-      
       const total = monthApps.length;
       const pending = monthApps.filter(app => {
         const status = app['Research Ethics Clearance Application Status'] || '';
@@ -183,18 +171,16 @@ const Dashboard = () => {
         const status = app['Research Ethics Clearance Application Status'] || '';
         return status.toLowerCase().includes('review results forwarded');
       }).length;
-      
-      last12Months.push({ 
-        month: monthKey, 
-        total,
-        pending,
-        approved,
-        needsRevision
-      });
+      last6Months.push({ month: monthKey, total, pending, approved, needsRevision });
     }
-    
-    return last12Months;
-  };
+    return last6Months;
+  }, [applications]);
+
+  const totalPages = Math.ceil(filteredApplications.length / ITEMS_PER_PAGE);
+  const paginatedApplications = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredApplications.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredApplications, currentPage]);
 
   if (loading) {
     return (
@@ -232,7 +218,7 @@ const Dashboard = () => {
               <div className="stat-header">
                 <div className="stat-info">
                   <div className="stat-label">Total Applications</div>
-                  <div className="stat-value">{getStatistics().total}</div>
+                  <div className="stat-value">{getStatistics.total}</div>
                 </div>
                 <div className="stat-icon">
                   <svg viewBox="0 0 24 24" fill="currentColor">
@@ -242,7 +228,7 @@ const Dashboard = () => {
               </div>
               <div className="stat-chart">
                 <ResponsiveContainer width="100%" height={80}>
-                  <BarChart data={getMonthlyData()}>
+                  <BarChart data={getMonthlyData}>
                     <XAxis 
                       dataKey="month" 
                       tick={{ fill: 'rgba(255, 255, 255, 0.7)', fontSize: 10 }} 
@@ -260,7 +246,7 @@ const Dashboard = () => {
               <div className="stat-header">
                 <div className="stat-info">
                   <div className="stat-label">Pending Review</div>
-                  <div className="stat-value">{getStatistics().pending}</div>
+                  <div className="stat-value">{getStatistics.pending}</div>
                 </div>
                 <div className="stat-icon">
                   <svg viewBox="0 0 24 24" fill="currentColor">
@@ -270,7 +256,7 @@ const Dashboard = () => {
               </div>
               <div className="stat-chart">
                 <ResponsiveContainer width="100%" height={80}>
-                  <LineChart data={getTrendData()}>
+                  <LineChart data={getTrendData}>
                     <XAxis 
                       dataKey="month" 
                       tick={{ fill: 'rgba(255, 255, 255, 0.7)', fontSize: 10 }} 
@@ -288,7 +274,7 @@ const Dashboard = () => {
               <div className="stat-header">
                 <div className="stat-info">
                   <div className="stat-label">Approved</div>
-                  <div className="stat-value">{getStatistics().approved}</div>
+                  <div className="stat-value">{getStatistics.approved}</div>
                 </div>
                 <div className="stat-icon">
                   <svg viewBox="0 0 24 24" fill="currentColor">
@@ -298,7 +284,7 @@ const Dashboard = () => {
               </div>
               <div className="stat-chart">
                 <ResponsiveContainer width="100%" height={80}>
-                  <BarChart data={getTrendData()}>
+                  <BarChart data={getTrendData}>
                     <XAxis 
                       dataKey="month" 
                       tick={{ fill: 'rgba(255, 255, 255, 0.7)', fontSize: 10 }} 
@@ -316,7 +302,7 @@ const Dashboard = () => {
               <div className="stat-header">
                 <div className="stat-info">
                   <div className="stat-label">Needs Revision</div>
-                  <div className="stat-value">{getStatistics().needsRevision}</div>
+                  <div className="stat-value">{getStatistics.needsRevision}</div>
                 </div>
                 <div className="stat-icon">
                   <svg viewBox="0 0 24 24" fill="currentColor">
@@ -326,7 +312,7 @@ const Dashboard = () => {
               </div>
               <div className="stat-chart">
                 <ResponsiveContainer width="100%" height={80}>
-                  <LineChart data={getTrendData()}>
+                  <LineChart data={getTrendData}>
                     <XAxis 
                       dataKey="month" 
                       tick={{ fill: 'rgba(255, 255, 255, 0.7)', fontSize: 10 }} 
@@ -367,7 +353,7 @@ const Dashboard = () => {
             <ResponsiveContainer width="100%" height={300}>
               <PieChart>
                 <Pie
-                  data={getStatusData()}
+                data={getStatusData}
                   cx="50%"
                   cy="50%"
                   innerRadius={60}
@@ -375,7 +361,7 @@ const Dashboard = () => {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {getStatusData().map((entry, index) => (
+                  {getStatusData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
@@ -433,17 +419,23 @@ const Dashboard = () => {
               {filteredApplications.length === 0 ? (
                 <tr>
                   <td colSpan="8" className="no-data">
-                    No applications found
+                    <div className="empty-state">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="56" height="56">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                      </svg>
+                      <h3>No Applications Found</h3>
+                      <p>Try adjusting your search term or status filter.</p>
+                    </div>
                   </td>
                 </tr>
               ) : (
-                filteredApplications.map((app, index) => {
+                paginatedApplications.map((app, index) => {
                   const rercCode = app['RERC Code for Revised Submission (Please specify the code assigned by the RERC Committee through your research college representative or research teacher for streamlined tracking of your submission); for New application, write NA'] || 'N/A';
                   const displayRercCode = rercCode === 'NA' ? 'N/A' : rercCode;
                   
                   return (
                   <tr key={app.rowIndex} className="clickable-row">
-                    <td>{index + 1}</td>
+                    <td>{(currentPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
                     <td>{truncateText(app['Name of Lead Researcher (First Name Middle Initial. Last Name) '])}</td>
                     <td>{truncateText(app['APPROVED RESEARCH TITLE'], 60)}</td>
                     <td>{truncateText(app['College'])}</td>
@@ -465,6 +457,35 @@ const Dashboard = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="pagination">
+            <button
+              className="page-btn"
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              ← Prev
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+              <button
+                key={page}
+                className={`page-btn${currentPage === page ? ' page-btn--active' : ''}`}
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              className="page-btn"
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+            >
+              Next →
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

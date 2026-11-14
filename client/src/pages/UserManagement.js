@@ -1,7 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Navbar from '../components/Navbar';
 import { userService, authService, programService, reviewerProgramService } from '../services/api';
+import { useToast } from '../components/Toast';
+import { useConfirm } from '../components/ConfirmModal';
 import './UserManagement.css';
+
+const ITEMS_PER_PAGE = 15;
 
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
@@ -16,7 +20,10 @@ const UserManagement = () => {
   const [newUser, setNewUser] = useState({ username: '', password: '', email: '', role: 'reviewer' });
   const [newPassword, setNewPassword] = useState('');
   const [error, setError] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const currentUser = authService.getCurrentUser();
+  const { showToast } = useToast();
+  const confirm = useConfirm();
 
   // A user is considered online if their last heartbeat was within 5 minutes
   const isOnline = (lastActiveAt) => {
@@ -27,9 +34,36 @@ const UserManagement = () => {
   useEffect(() => {
     fetchUsers();
     fetchPrograms();
-    // Refresh users list every 30 s so online status stays up to date
-    const refreshTimer = setInterval(fetchUsers, 30000);
-    return () => clearInterval(refreshTimer);
+
+    let refreshTimer = null;
+
+    const startPolling = () => {
+      refreshTimer = setInterval(fetchUsers, 30000);
+    };
+
+    const stopPolling = () => {
+      if (refreshTimer) {
+        clearInterval(refreshTimer);
+        refreshTimer = null;
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        stopPolling();
+      } else {
+        fetchUsers();
+        startPolling();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    startPolling();
+
+    return () => {
+      stopPolling();
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -39,6 +73,7 @@ const UserManagement = () => {
       setAllPrograms(programs);
     } catch (err) {
       console.error('Failed to load programs:', err);
+      setError('Failed to load program list.');
     }
   };
 
@@ -48,19 +83,17 @@ const UserManagement = () => {
       setError('');
       const data = await userService.getAll();
       setUsers(data);
-      
-      // Fetch programs for each reviewer
+
+      // Fetch programs for ALL reviewers in parallel instead of sequentially
+      const reviewers = data.filter(u => u.role === 'reviewer');
+      const results = await Promise.allSettled(
+        reviewers.map(u => reviewerProgramService.getPrograms(u.id))
+      );
+
       const programsMap = {};
-      for (const user of data) {
-        if (user.role === 'reviewer') {
-          try {
-            const programs = await reviewerProgramService.getPrograms(user.id);
-            programsMap[user.id] = programs;
-          } catch (err) {
-            programsMap[user.id] = [];
-          }
-        }
-      }
+      reviewers.forEach((user, i) => {
+        programsMap[user.id] = results[i].status === 'fulfilled' ? results[i].value : [];
+      });
       setReviewerPrograms(programsMap);
     } catch (err) {
       console.error('Failed to load users:', err);
@@ -84,20 +117,21 @@ const UserManagement = () => {
       setShowAddModal(false);
       setNewUser({ username: '', password: '', email: '', role: 'reviewer' });
       fetchUsers();
-      alert('User created successfully!');
+      showToast('User created successfully!', 'success');
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to create user');
     }
   };
 
   const handleDeleteUser = async (userId, username) => {
-    if (window.confirm(`Are you sure you want to delete user "${username}"?`)) {
+    const ok = await confirm(`Are you sure you want to delete user "${username}"? This action cannot be undone.`);
+    if (ok) {
       try {
         await userService.delete(userId);
         fetchUsers();
-        alert('User deleted successfully!');
+        showToast('User deleted successfully!', 'success');
       } catch (err) {
-        alert(err.response?.data?.error || 'Failed to delete user');
+        showToast(err.response?.data?.error || 'Failed to delete user', 'error');
       }
     }
   };
@@ -115,7 +149,7 @@ const UserManagement = () => {
       await userService.changePassword(newPassword);
       setShowPasswordModal(false);
       setNewPassword('');
-      alert('Password changed successfully!');
+      showToast('Password changed successfully!', 'success');
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to change password');
     }
@@ -150,12 +184,18 @@ const UserManagement = () => {
     try {
       await reviewerProgramService.updatePrograms(selectedReviewer.id, assignedPrograms);
       setShowProgramsModal(false);
-      alert('Programs updated successfully!');
-      fetchUsers(); // Refresh to show updated programs
+      showToast('Programs updated successfully!', 'success');
+      fetchUsers();
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to update programs');
     }
   };
+
+  const totalPages = Math.ceil(users.length / ITEMS_PER_PAGE);
+  const paginatedUsers = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return users.slice(start, start + ITEMS_PER_PAGE);
+  }, [users, currentPage]);
 
   if (loading) {
     return (
@@ -204,9 +244,9 @@ const UserManagement = () => {
               </tr>
             </thead>
             <tbody>
-              {users.map((user, index) => (
+              {paginatedUsers.map((user, index) => (
                 <tr key={user.id}>
-                  <td>{index + 1}</td>
+                  <td>{(currentPage - 1) * ITEMS_PER_PAGE + index + 1}</td>
                   <td>
                     <span
                       className={`online-dot ${isOnline(user.last_active_at) ? 'online-dot--active' : 'online-dot--inactive'}`}
@@ -267,6 +307,35 @@ const UserManagement = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="pagination">
+            <button
+              className="page-btn"
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+            >
+              ← Prev
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+              <button
+                key={page}
+                className={`page-btn${currentPage === page ? ' page-btn--active' : ''}`}
+                onClick={() => setCurrentPage(page)}
+              >
+                {page}
+              </button>
+            ))}
+            <button
+              className="page-btn"
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+            >
+              Next →
+            </button>
+          </div>
+        )}
 
         {/* Add User Modal */}
         {showAddModal && (

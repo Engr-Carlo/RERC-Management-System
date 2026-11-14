@@ -10,6 +10,8 @@ import Profile from './pages/Profile';
 import RERCHeadPanel from './pages/RERCHeadPanel';
 import RERCHeadReview from './pages/RERCHeadReview';
 import ProtectedRoute from './components/ProtectedRoute';
+import { ToastProvider } from './components/Toast';
+import { ConfirmProvider } from './components/ConfirmModal';
 import { authService } from './services/api';
 
 function App() {
@@ -28,6 +30,8 @@ function App() {
   }, []);
 
   return (
+    <ToastProvider>
+    <ConfirmProvider>
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
@@ -97,6 +101,8 @@ function App() {
         />
       </Routes>
     </Router>
+    </ConfirmProvider>
+    </ToastProvider>
   );
 }
 

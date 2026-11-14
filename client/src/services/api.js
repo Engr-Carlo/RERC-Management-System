@@ -45,10 +45,20 @@ const resetInactivityTimer = () => {
   }
 };
 
+// Debounce: fire at most once per 300 ms regardless of event burst
+const debounce = (fn, delay) => {
+  let timer = null;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
+  };
+};
+const debouncedResetTimer = debounce(resetInactivityTimer, 300);
+
 // Track user activity
 if (typeof window !== 'undefined') {
   ['mousedown', 'keydown', 'scroll', 'touchstart', 'click'].forEach(event => {
-    document.addEventListener(event, resetInactivityTimer, true);
+    document.addEventListener(event, debouncedResetTimer, true);
   });
 }
 

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { applicationService } from '../services/api';
+import { useToast } from '../components/Toast';
+import { useConfirm } from '../components/ConfirmModal';
 import './ApplicationDetail.css';
 
 const ApplicationDetail = () => {
@@ -11,11 +13,14 @@ const ApplicationDetail = () => {
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [historyError, setHistoryError] = useState('');
   const [editingField, setEditingField] = useState(null);
   const [editValue, setEditValue] = useState('');
   const [updating, setUpdating] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [newComment, setNewComment] = useState('');
+  const { showToast } = useToast();
+  const confirm = useConfirm();
 
   useEffect(() => {
     fetchApplication();
@@ -38,10 +43,12 @@ const ApplicationDetail = () => {
 
   const fetchHistory = async () => {
     try {
+      setHistoryError('');
       const data = await applicationService.getHistory(rowIndex);
       setHistory(data);
     } catch (err) {
       console.error('Failed to load history:', err);
+      setHistoryError('Failed to load history. Click "Show History" again to retry.');
     }
   };
 
@@ -72,9 +79,9 @@ const ApplicationDetail = () => {
       // Refresh history
       fetchHistory();
       
-      alert('Updated successfully!');
+      showToast('Updated successfully!', 'success');
     } catch (err) {
-      alert('Failed to update. Please try again.');
+      showToast('Failed to update. Please try again.', 'error');
       console.error(err);
     } finally {
       setUpdating(false);
@@ -82,9 +89,8 @@ const ApplicationDetail = () => {
   };
 
   const handleStatusUpdate = async (status) => {
-    if (!window.confirm(`Are you sure you want to mark this application as "${status}"?`)) {
-      return;
-    }
+    const ok = await confirm(`Are you sure you want to mark this application as "${status}"?`);
+    if (!ok) return;
 
     try {
       setUpdating(true);
@@ -99,9 +105,9 @@ const ApplicationDetail = () => {
       // Refresh history
       fetchHistory();
       
-      alert(`Application status updated to: ${status}`);
+      showToast(`Application status updated to: ${status}`, 'success');
     } catch (err) {
-      alert('Failed to update status. Please try again.');
+      showToast('Failed to update status. Please try again.', 'error');
       console.error(err);
     } finally {
       setUpdating(false);
@@ -110,18 +116,16 @@ const ApplicationDetail = () => {
 
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) {
-      alert('Please enter a comment.');
+      showToast('Please enter a comment.', 'warning');
       return;
     }
 
-    if (!window.confirm('Are you sure you want to add this comment?')) {
-      return;
-    }
+    const ok = await confirm('Are you sure you want to add this comment?');
+    if (!ok) return;
 
     try {
       setUpdating(true);
       
-      // Append new comment to existing comments (clean version for Google Sheet)
       const existingComments = application['COMMENTS'] || '';
       const updatedComments = existingComments 
         ? `${existingComments}\n\n${newComment}`
@@ -129,7 +133,6 @@ const ApplicationDetail = () => {
       
       await applicationService.update(rowIndex, 'COMMENTS', updatedComments);
       
-      // Update local state
       setApplication({
         ...application,
         'COMMENTS': updatedComments
@@ -138,9 +141,9 @@ const ApplicationDetail = () => {
       setNewComment('');
       fetchHistory();
       
-      alert('Comment added successfully!');
+      showToast('Comment added successfully!', 'success');
     } catch (err) {
-      alert('Failed to add comment. Please try again.');
+      showToast('Failed to add comment. Please try again.', 'error');
       console.error(err);
     } finally {
       setUpdating(false);
@@ -219,6 +222,8 @@ const ApplicationDetail = () => {
       </div>
     );
   };
+
+  const getSubmissionTimestamp = (applicationItem) => applicationItem?.Timestamp || applicationItem?.Date || '';
 
   const formatDate = (timestamp) => {
     return new Date(timestamp).toLocaleString();
@@ -320,7 +325,7 @@ const ApplicationDetail = () => {
             <div className="field-grid">
               <div className="field-item full-width">
                 <label>Submission Date:</label>
-                {renderFieldValue('Date', application['Date'])}
+                {renderFieldValue('Date', getSubmissionTimestamp(application))}
               </div>
               <div className="field-item full-width">
                 <label>RERC Code:</label>
@@ -408,29 +413,39 @@ const ApplicationDetail = () => {
             </div>
           </div>
 
-          {showHistory && history.length > 0 && (
+          {showHistory && (
             <div>
               <h2>Change History</h2>
-              <div className="history-list">
-                {history.map((log) => (
-                  <div key={log.id} className="history-item">
-                    <div className="history-header">
-                      <span className="history-user">{log.username}</span>
-                      <span className="history-date">{formatDate(log.timestamp)}</span>
+              {historyError && (
+                <div className="error-banner" style={{ marginBottom: '1rem' }}>
+                  {historyError}
+                </div>
+              )}
+              {!historyError && history.length === 0 && (
+                <div className="no-history">No history recorded for this application yet.</div>
+              )}
+              {history.length > 0 && (
+                <div className="history-list">
+                  {history.map((log) => (
+                    <div key={log.id} className="history-item">
+                      <div className="history-header">
+                        <span className="history-user">{log.username}</span>
+                        <span className="history-date">{formatDate(log.timestamp)}</span>
+                      </div>
+                      <div className="history-body">
+                        <strong>{log.action}:</strong> {log.field_name}
+                        {log.old_value && (
+                          <div className="history-change">
+                            <span className="old-value">From: {log.old_value}</span>
+                            <span className="arrow">→</span>
+                            <span className="new-value">To: {log.new_value}</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div className="history-body">
-                      <strong>{log.action}:</strong> {log.field_name}
-                      {log.old_value && (
-                        <div className="history-change">
-                          <span className="old-value">From: {log.old_value}</span>
-                          <span className="arrow">→</span>
-                          <span className="new-value">To: {log.new_value}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
