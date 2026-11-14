@@ -49,13 +49,14 @@ const Dashboard = () => {
   const filterApplications = () => {
     let filtered = applications;
 
-    // Only filter OUT applications with remarks/comments when NOT viewing "all"
-    // When viewing "all", show everything including processed applications
+    // This SY, remarks are optional and comments alone count as a review.
+    // When not viewing "all", keep only applications that are still pending review.
     if (statusFilter !== 'all') {
       filtered = filtered.filter(app => {
-        const remarks = app['Remarks'] || '';
-        const comments = app['Comments'] || '';
-        return !remarks.trim() && !comments.trim();
+        const remarks = getRemarksValue(app);
+        const comments = getCommentsValue(app);
+        const status = getStatusValue(app);
+        return !status.trim() && !(remarks.trim() || comments.trim());
       });
     }
 
@@ -71,7 +72,7 @@ const Dashboard = () => {
     // Filter by status
     if (statusFilter !== 'all') {
       filtered = filtered.filter(app => {
-        const status = app['Research Ethics Clearance Application Status'] || '';
+        const status = getStatusValue(app);
         const statusLower = status.toLowerCase();
         
         // Map filter values to actual Google Sheet status values
@@ -96,6 +97,16 @@ const Dashboard = () => {
 
   const getStatusBadge = (status) => <StatusBadge status={status} />;
   const getSubmissionTimestamp = (app) => app?.Timestamp || app?.Date || '';
+  const getFieldValue = (app, ...keys) => {
+    for (const key of keys) {
+      const value = app?.[key];
+      if (value !== undefined && value !== null && value !== '') return value;
+    }
+    return '';
+  };
+  const getStatusValue = (app) => getFieldValue(app, 'Research Ethics Clearance Application Status', 'Status', 'STATUS');
+  const getCommentsValue = (app) => getFieldValue(app, 'COMMENTS', 'Comment', 'COMMENT', 'Comments');
+  const getRemarksValue = (app) => getFieldValue(app, 'Remarks', 'REMARKS', 'remarks');
 
   const truncateText = (text, maxLength = 50) => {
     if (!text) return 'N/A';
@@ -105,15 +116,15 @@ const Dashboard = () => {
   const getStatistics = useMemo(() => {
     const total = applications.length;
     const pending = applications.filter(app => {
-      const status = app['Research Ethics Clearance Application Status'] || '';
+      const status = getStatusValue(app);
       return status === '' || status.toLowerCase().includes('pending');
     }).length;
     const approved = applications.filter(app => {
-      const status = app['Research Ethics Clearance Application Status'] || '';
+      const status = getStatusValue(app);
       return status.toLowerCase().includes('completed');
     }).length;
     const needsRevision = applications.filter(app => {
-      const status = app['Research Ethics Clearance Application Status'] || '';
+      const status = getStatusValue(app);
       return status.toLowerCase().includes('review results forwarded');
     }).length;
     return { total, pending, approved, needsRevision };
@@ -160,15 +171,15 @@ const Dashboard = () => {
       });
       const total = monthApps.length;
       const pending = monthApps.filter(app => {
-        const status = app['Research Ethics Clearance Application Status'] || '';
+        const status = getStatusValue(app);
         return status === '' || status.toLowerCase().includes('pending');
       }).length;
       const approved = monthApps.filter(app => {
-        const status = app['Research Ethics Clearance Application Status'] || '';
+        const status = getStatusValue(app);
         return status.toLowerCase().includes('completed');
       }).length;
       const needsRevision = monthApps.filter(app => {
-        const status = app['Research Ethics Clearance Application Status'] || '';
+        const status = getStatusValue(app);
         return status.toLowerCase().includes('review results forwarded');
       }).length;
       last6Months.push({ month: monthKey, total, pending, approved, needsRevision });

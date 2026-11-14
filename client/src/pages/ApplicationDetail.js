@@ -88,62 +88,68 @@ const ApplicationDetail = () => {
     }
   };
 
-  const handleStatusUpdate = async (status) => {
-    const ok = await confirm(`Are you sure you want to mark this application as "${status}"?`);
-    if (!ok) return;
-
-    try {
-      setUpdating(true);
-      await applicationService.update(rowIndex, 'Remarks', status);
-      
-      // Update local state
-      setApplication({
-        ...application,
-        'Remarks': status
-      });
-      
-      // Refresh history
-      fetchHistory();
-      
-      showToast(`Application status updated to: ${status}`, 'success');
-    } catch (err) {
-      showToast('Failed to update status. Please try again.', 'error');
-      console.error(err);
-    } finally {
-      setUpdating(false);
+  const getFieldValue = (app, ...keys) => {
+    for (const key of keys) {
+      const value = app?.[key];
+      if (value !== undefined && value !== null && value !== '') return value;
     }
+    return '';
   };
 
-  const handleCommentSubmit = async () => {
-    if (!newComment.trim()) {
-      showToast('Please enter a comment.', 'warning');
+  const getStatusValue = (app) => getFieldValue(app, 'Research Ethics Clearance Application Status', 'Status', 'STATUS');
+  const getCommentsValue = (app) => getFieldValue(app, 'COMMENTS', 'Comment', 'COMMENT', 'Comments');
+  const getRemarksValue = (app) => getFieldValue(app, 'Remarks', 'REMARKS', 'remarks');
+
+  const handleCommentSubmit = async (decision = 'resubmission') => {
+    const isApproval = decision === 'approve';
+
+    if (!isApproval && !newComment.trim()) {
+      showToast('Please enter a comment to send this application for resubmission.', 'warning');
       return;
     }
 
-    const ok = await confirm('Are you sure you want to add this comment?');
+    const ok = await confirm(
+      isApproval
+        ? 'Are you sure you want to approve this application?'
+        : 'Are you sure you want to send this application back for resubmission?'
+    );
     if (!ok) return;
 
     try {
       setUpdating(true);
-      
-      const existingComments = application['COMMENTS'] || '';
-      const updatedComments = existingComments 
-        ? `${existingComments}\n\n${newComment}`
-        : newComment;
-      
-      await applicationService.update(rowIndex, 'COMMENTS', updatedComments);
-      
+
+      if (!isApproval) {
+        const commentField = Object.keys(application || {}).find(key => key.toLowerCase() === 'comments' || key.toLowerCase() === 'comment') || 'COMMENTS';
+        const existingComments = getCommentsValue(application);
+        const updatedComments = existingComments 
+          ? `${existingComments}\n\n${newComment.trim()}`
+          : newComment.trim();
+
+        await applicationService.update(rowIndex, commentField, updatedComments);
+        setApplication({
+          ...application,
+          [commentField]: updatedComments
+        });
+      }
+
+      const statusValue = isApproval ? 'Approved' : 'For Resubmission';
+      await applicationService.update(rowIndex, 'Research Ethics Clearance Application Status', statusValue);
+
       setApplication({
         ...application,
-        'COMMENTS': updatedComments
+        'Research Ethics Clearance Application Status': statusValue,
+        ...(isApproval ? {} : { [Object.keys(application || {}).find(key => key.toLowerCase() === 'comments' || key.toLowerCase() === 'comment') || 'COMMENTS']: application?.[Object.keys(application || {}).find(key => key.toLowerCase() === 'comments' || key.toLowerCase() === 'comment') || 'COMMENTS'] || newComment.trim() })
       });
-      
+
       setNewComment('');
       fetchHistory();
-      
-      showToast('Comment added successfully!', 'success');
+
+      showToast(
+        isApproval ? 'Application approved successfully!' : 'Application sent back for resubmission.',
+        'success'
+      );
     } catch (err) {
-      showToast('Failed to add comment. Please try again.', 'error');
+      showToast('Failed to update application. Please try again.', 'error');
       console.error(err);
     } finally {
       setUpdating(false);
@@ -157,7 +163,8 @@ const ApplicationDetail = () => {
 
   const isEditableField = (fieldName) => {
     return fieldName === 'Research Ethics Clearance Application Status' || 
-           fieldName === 'COMMENTS';
+           fieldName === 'COMMENTS' ||
+           fieldName === 'COMMENT';
   };
 
   const renderFieldValue = (fieldName, value) => {
@@ -178,7 +185,7 @@ const ApplicationDetail = () => {
     if (editingField === fieldName) {
       return (
         <div className="edit-container">
-          {fieldName === 'COMMENTS' ? (
+          {fieldName === 'COMMENTS' || fieldName === 'COMMENT' ? (
             <textarea
               value={editValue}
               onChange={(e) => setEditValue(e.target.value)}
@@ -263,20 +270,6 @@ const ApplicationDetail = () => {
           </button>
           <h1>Application Details</h1>
           <div className="header-actions">
-            <button 
-              onClick={() => handleStatusUpdate('For Resubmission')} 
-              className="status-button status-resubmission"
-              disabled={updating}
-            >
-              For Resubmission
-            </button>
-            <button 
-              onClick={() => handleStatusUpdate('Approved')} 
-              className="status-button status-approved"
-              disabled={updating}
-            >
-              Approved
-            </button>
             <button onClick={() => setShowHistory(!showHistory)} className="history-toggle-button">
               {showHistory ? 'Hide History' : 'Show History'}
             </button>
@@ -380,34 +373,44 @@ const ApplicationDetail = () => {
               <div className="field-item full-width">
                 <label>Status:</label>
                 {renderFieldValue('Research Ethics Clearance Application Status', 
-                  application['Research Ethics Clearance Application Status'])}
+                  getStatusValue(application))}
               </div>
               <div className="field-item full-width">
                 <label>Remarks:</label>
-                {renderFieldValue('Remarks', application['Remarks'])}
+                {renderFieldValue('Remarks', getRemarksValue(application))}
               </div>
               <div className="field-item full-width">
                 <label>Comments:</label>
-                {renderFieldValue('COMMENTS', application['COMMENTS'])}
+                {renderFieldValue('COMMENTS', getCommentsValue(application))}
               </div>
               <div className="field-item full-width">
-                <label>Add New Comment:</label>
-                <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-start' }}>
+                <label>Reviewer Decision:</label>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   <textarea
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
-                    placeholder="Enter your comment here..."
+                    placeholder="Write a comment here if this should go back for resubmission..."
                     rows="3"
-                    style={{ flex: 1, padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                    style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
                   />
-                  <button 
-                    onClick={handleCommentSubmit}
-                    disabled={updating || !newComment.trim()}
-                    className="btn-primary"
-                    style={{ padding: '8px 16px', whiteSpace: 'nowrap' }}
-                  >
-                    Add Comment
-                  </button>
+                  <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                    <button
+                      onClick={() => handleCommentSubmit('approve')}
+                      className="btn-primary"
+                      disabled={updating}
+                      style={{ padding: '8px 16px', whiteSpace: 'nowrap' }}
+                    >
+                      Approve
+                    </button>
+                    <button
+                      onClick={() => handleCommentSubmit('resubmission')}
+                      className="btn-secondary"
+                      disabled={updating || !newComment.trim()}
+                      style={{ padding: '8px 16px', whiteSpace: 'nowrap' }}
+                    >
+                      For Resubmission
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

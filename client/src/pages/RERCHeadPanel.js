@@ -25,19 +25,25 @@ const RERCHeadPanel = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, applications]);
 
+  const getFieldValue = (app, ...keys) => {
+    for (const key of keys) {
+      const value = app?.[key];
+      if (value !== undefined && value !== null && value !== '') return value;
+    }
+    return '';
+  };
+
   const fetchReviewedApplications = async () => {
     try {
       setLoading(true);
       const data = await applicationService.getAll();
       
-      // Filter to show applications that have remarks/comments but NO status yet
-      // These are applications reviewed by reviewers but not yet finalized by RERC Head
+      // This SY, remarks are optional. A comment alone is enough to trigger review.
       const reviewed = data.filter(app => {
-        const status = app['Research Ethics Clearance Application Status'] || '';
-        const remarks = app['Remarks'] || '';
-        const comments = app['Comments'] || '';
+        const status = getFieldValue(app, 'Research Ethics Clearance Application Status', 'Status', 'STATUS');
+        const remarks = getFieldValue(app, 'Remarks', 'REMARKS', 'remarks');
+        const comments = getFieldValue(app, 'COMMENTS', 'Comment', 'COMMENT', 'Comments');
         
-        // Show applications that have remarks OR comments but NO status
         return (remarks.trim() || comments.trim()) && !status.trim();
       });
       
@@ -184,7 +190,10 @@ const RERCHeadPanel = () => {
                     <td>{truncateText(app['College'])}</td>
                     <td>{truncateText(app['Program'])}</td>
                     <td className="rerc-code-cell">{truncateText(displayRercCode, 30)}</td>
-                    <td>{truncateText(app['Remarks'])}</td>
+                    <td>{truncateText(
+                      getFieldValue(app, 'Remarks', 'REMARKS', 'remarks') ||
+                      getFieldValue(app, 'COMMENTS', 'Comment', 'COMMENT', 'Comments')
+                    )}</td>
                     <td>
                       {authService.getCurrentUser()?.role === 'rerc_head' ? (
                         <button

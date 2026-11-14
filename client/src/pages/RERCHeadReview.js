@@ -18,6 +18,15 @@ const RERCHeadReview = () => {
   const confirm = useConfirm();
 
   const getSubmissionTimestamp = (applicationItem) => applicationItem?.Timestamp || applicationItem?.Date || '';
+  const getFieldValue = (app, ...keys) => {
+    for (const key of keys) {
+      const value = app?.[key];
+      if (value !== undefined && value !== null && value !== '') return value;
+    }
+    return '';
+  };
+  const getCommentsValue = (app) => getFieldValue(app, 'COMMENTS', 'Comment', 'COMMENT', 'Comments');
+  const getRemarksValue = (app) => getFieldValue(app, 'Remarks', 'REMARKS', 'remarks');
 
   const copyToClipboard = (text, label) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -197,10 +206,10 @@ const RERCHeadReview = () => {
         <div className="application-details">
           <h2>Application Information</h2>
           
-          {application['Remarks'] && (
+          {getRemarksValue(application) && (
             <div className="remarks-section">  
               <h3>Reviewer Remarks</h3>
-              <div className="remarks-content">{application['Remarks']}</div>
+              <div className="remarks-content">{getRemarksValue(application)}</div>
             </div>
           )}
           
@@ -224,13 +233,13 @@ const RERCHeadReview = () => {
             </div>
           )}
 
-          {application['COMMENTS'] && (
+          {getCommentsValue(application) && (
             <div className="comments-section">
               <div className="section-header-with-copy">
                 <h3>Committee Comments</h3>
                 <button 
                   className="copy-btn"
-                  onClick={() => copyToClipboard(application['COMMENTS'], 'Committee Comments')}
+                  onClick={() => copyToClipboard(getCommentsValue(application), 'Committee Comments')}
                   title="Copy to clipboard"
                 >
                   <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
@@ -239,7 +248,7 @@ const RERCHeadReview = () => {
                   Copy
                 </button>
               </div>
-              <div className="comments-content">{application['COMMENTS']}</div>
+              <div className="comments-content">{getCommentsValue(application)}</div>
             </div>
           )}
 
