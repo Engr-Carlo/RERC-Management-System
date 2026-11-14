@@ -331,7 +331,7 @@ const Dashboard = () => {
           <div className="large-chart-card">
             <h3>Application Submissions Over Time</h3>
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={getTrendData()}>
+              <LineChart data={getTrendData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="month" stroke="#64748b" />
                 <YAxis stroke="#64748b" />
