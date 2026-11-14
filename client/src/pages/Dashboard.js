@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import StatusBadge from '../components/StatusBadge';
@@ -18,21 +18,29 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchApplications();
+  const getFieldValue = useCallback((app, ...keys) => {
+    for (const key of keys) {
+      const value = app?.[key];
+      if (value !== undefined && value !== null && value !== '') return value;
+    }
+    return '';
   }, []);
 
-  // Debounced filter — waits 300 ms after last search/filter change
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      filterApplications();
-      setCurrentPage(1);
-    }, 300);
-    return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTerm, statusFilter, applications]);
+  const getStatusValue = useCallback(
+    (app) => getFieldValue(app, 'Research Ethics Clearance Application Status', 'Status', 'STATUS'),
+    [getFieldValue]
+  );
+  const getCommentsValue = useCallback(
+    (app) => getFieldValue(app, 'COMMENTS', 'Comment', 'COMMENT', 'Comments'),
+    [getFieldValue]
+  );
+  const getRemarksValue = useCallback(
+    (app) => getFieldValue(app, 'Remarks', 'REMARKS', 'remarks'),
+    [getFieldValue]
+  );
+  const getSubmissionTimestamp = useCallback((app) => app?.Timestamp || app?.Date || '', []);
 
-  const fetchApplications = async () => {
+  const fetchApplications = useCallback(async () => {
     try {
       setLoading(true);
       const data = await applicationService.getAll();
@@ -44,9 +52,9 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const filterApplications = () => {
+  const filterApplications = useCallback(() => {
     let filtered = applications;
 
     // This SY, remarks are optional and comments alone count as a review.
@@ -74,7 +82,7 @@ const Dashboard = () => {
       filtered = filtered.filter(app => {
         const status = getStatusValue(app);
         const statusLower = status.toLowerCase();
-        
+
         // Map filter values to actual Google Sheet status values
         if (statusFilter === 'pending') {
           return statusLower.includes('pending') || status === '';
@@ -83,30 +91,32 @@ const Dashboard = () => {
         } else if (statusFilter === 'needs revision') {
           return statusLower.includes('review results forwarded via email');
         }
-        
+
         return false;
       });
     }
 
     setFilteredApplications(filtered);
-  };
+  }, [applications, getCommentsValue, getRemarksValue, getStatusValue, searchTerm, statusFilter]);
+
+  useEffect(() => {
+    fetchApplications();
+  }, [fetchApplications]);
+
+  // Debounced filter — waits 300 ms after last search/filter change
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      filterApplications();
+      setCurrentPage(1);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [filterApplications]);
 
   const handleRowClick = (rowIndex) => {
     navigate(`/application/${rowIndex}`);
   };
 
   const getStatusBadge = (status) => <StatusBadge status={status} />;
-  const getSubmissionTimestamp = (app) => app?.Timestamp || app?.Date || '';
-  const getFieldValue = (app, ...keys) => {
-    for (const key of keys) {
-      const value = app?.[key];
-      if (value !== undefined && value !== null && value !== '') return value;
-    }
-    return '';
-  };
-  const getStatusValue = (app) => getFieldValue(app, 'Research Ethics Clearance Application Status', 'Status', 'STATUS');
-  const getCommentsValue = (app) => getFieldValue(app, 'COMMENTS', 'Comment', 'COMMENT', 'Comments');
-  const getRemarksValue = (app) => getFieldValue(app, 'Remarks', 'REMARKS', 'remarks');
 
   const truncateText = (text, maxLength = 50) => {
     if (!text) return 'N/A';
@@ -128,7 +138,7 @@ const Dashboard = () => {
       return status.toLowerCase().includes('review results forwarded');
     }).length;
     return { total, pending, approved, needsRevision };
-  }, [applications]);
+  }, [applications, getStatusValue]);
 
   const getMonthlyData = useMemo(() => {
     const monthCounts = {};
@@ -147,7 +157,7 @@ const Dashboard = () => {
       .sort((a, b) => new Date(a[0]) - new Date(b[0]))
       .slice(-6)
       .map(([month, count]) => ({ month, applications: count }));
-  }, [applications]);
+  }, [applications, getSubmissionTimestamp]);
 
   const getStatusData = useMemo(() => [
     { name: 'Pending', value: getStatistics.pending, color: '#3B82F6' },
@@ -185,7 +195,7 @@ const Dashboard = () => {
       last6Months.push({ month: monthKey, total, pending, approved, needsRevision });
     }
     return last6Months;
-  }, [applications]);
+  }, [applications, getStatusValue, getSubmissionTimestamp]);
 
   const totalPages = Math.ceil(filteredApplications.length / ITEMS_PER_PAGE);
   const paginatedApplications = useMemo(() => {

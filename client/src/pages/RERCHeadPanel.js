@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { applicationService, authService } from '../services/api';
@@ -15,38 +15,28 @@ const RERCHeadPanel = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchReviewedApplications();
-  }, []);
-
-  useEffect(() => {
-    filterApplications();
-    setCurrentPage(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTerm, applications]);
-
-  const getFieldValue = (app, ...keys) => {
+  const getFieldValue = useCallback((app, ...keys) => {
     for (const key of keys) {
       const value = app?.[key];
       if (value !== undefined && value !== null && value !== '') return value;
     }
     return '';
-  };
+  }, []);
 
-  const fetchReviewedApplications = async () => {
+  const fetchReviewedApplications = useCallback(async () => {
     try {
       setLoading(true);
       const data = await applicationService.getAll();
-      
+
       // This SY, remarks are optional. A comment alone is enough to trigger review.
       const reviewed = data.filter(app => {
         const status = getFieldValue(app, 'Research Ethics Clearance Application Status', 'Status', 'STATUS');
         const remarks = getFieldValue(app, 'Remarks', 'REMARKS', 'remarks');
         const comments = getFieldValue(app, 'COMMENTS', 'Comment', 'COMMENT', 'Comments');
-        
+
         return (remarks.trim() || comments.trim()) && !status.trim();
       });
-      
+
       setApplications(reviewed);
       setFilteredApplications(reviewed);
     } catch (err) {
@@ -55,9 +45,9 @@ const RERCHeadPanel = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getFieldValue]);
 
-  const filterApplications = () => {
+  const filterApplications = useCallback(() => {
     if (searchTerm) {
       const filtered = applications.filter(app =>
         Object.values(app).some(value =>
@@ -68,7 +58,16 @@ const RERCHeadPanel = () => {
     } else {
       setFilteredApplications(applications);
     }
-  };
+  }, [applications, searchTerm]);
+
+  useEffect(() => {
+    fetchReviewedApplications();
+  }, [fetchReviewedApplications]);
+
+  useEffect(() => {
+    filterApplications();
+    setCurrentPage(1);
+  }, [filterApplications]);
 
   const totalPages = Math.ceil(filteredApplications.length / ITEMS_PER_PAGE);
   const paginatedApplications = useMemo(() => {
