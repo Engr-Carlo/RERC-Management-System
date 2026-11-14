@@ -204,16 +204,16 @@
 }
 
 .page-btn:hover:not(:disabled) {
-  border-color: #3B82F6;
-  color: #3B82F6;
+  border-color: #1e4d8c;
+  color: #1e4d8c;
   background: #eff6ff;
 }
 
 .page-btn--active {
-  background: linear-gradient(135deg, #3B82F6, #2563EB);
-  border-color: #2563EB;
+  background: linear-gradient(135deg, #1e4d8c, #0f2a4a);
+  border-color: #0f2a4a;
   color: #fff;
-  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.35);
+  box-shadow: 0 3px 8px rgba(30, 77, 140, 0.35);
 }
 
 .page-btn--active:hover {

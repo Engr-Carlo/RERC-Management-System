@@ -28,12 +28,12 @@
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3B82F6, #2563EB);
+  background: linear-gradient(135deg, #1e4d8c, #0f2a4a);
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 1rem;
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
+  box-shadow: 0 6px 20px rgba(30, 77, 140, 0.35);
 }
 
 .profile-avatar-initials {
@@ -123,12 +123,12 @@
 
 .form-group input:focus {
   outline: none;
-  border-color: #3B82F6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  border-color: #1e4d8c;
+  box-shadow: 0 0 0 3px rgba(30, 77, 140, 0.15);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #3B82F6, #2563EB);
+  background: linear-gradient(135deg, #1e4d8c, #0f2a4a);
   color: white;
   border: none;
   padding: 0.75rem 1.75rem;
@@ -138,12 +138,12 @@
   font-family: 'Inter', sans-serif;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px rgba(30, 77, 140, 0.3);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: linear-gradient(135deg, #2563EB, #1d4ed8);
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+  background: linear-gradient(135deg, #0f2a4a, #0a192f);
+  box-shadow: 0 6px 20px rgba(30, 77, 140, 0.4);
   transform: translateY(-1px);
 }
 

@@ -91,7 +91,7 @@
 .stat-card:nth-child(4) { animation-delay: 0.2s; }
 
 .stat-card:hover {
-  transform: translateY(-6px);
+  transform: translateY(-3px);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
@@ -171,11 +171,11 @@
 
 /* Color Themes for Each Card - Professional Blue System */
 .stat-total {
-  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  background: linear-gradient(135deg, #1e4d8c 0%, #0f2a4a 100%);
 }
 
 .stat-pending {
-  background: linear-gradient(135deg, #06B6D4 0%, #0891B2 100%);
+  background: linear-gradient(135deg, #0e7490 0%, #155e75 100%);
 }
 
 .stat-approved {
@@ -256,8 +256,8 @@
 
 .search-box input:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #1e4d8c;
+  box-shadow: 0 0 0 3px rgba(30, 77, 140, 0.1);
   background: white;
 }
 
@@ -299,8 +299,8 @@
 
 .filter-group select:focus {
   outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #1e4d8c;
+  box-shadow: 0 0 0 3px rgba(30, 77, 140, 0.1);
   background: white;
 }
 
@@ -330,7 +330,7 @@
 }
 
 .applications-table thead {
-  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  background: linear-gradient(135deg, #1e4d8c 0%, #0f2a4a 100%);
   color: white;
 }
 
@@ -355,7 +355,7 @@
 
 .applications-table tbody tr:hover {
   background: #eff6ff;
-  box-shadow: inset 0 0 0 2px #3b82f6;
+  box-shadow: inset 0 0 0 2px #1e4d8c;
 }
 
 .applications-table td {
@@ -427,7 +427,7 @@
 
 /* View Button */
 .view-button {
-  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  background: linear-gradient(135deg, #1e4d8c, #0f2a4a);
   color: white;
   border: none;
   padding: 0.65rem 1.25rem;
@@ -436,13 +436,13 @@
   font-size: 0.85rem;
   font-weight: 600;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.25);
+  box-shadow: 0 2px 8px rgba(30, 77, 140, 0.25);
 }
 
 .view-button:hover {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, #0f2a4a, #0a192f);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+  box-shadow: 0 4px 12px rgba(30, 77, 140, 0.35);
 }
 
 /* Loading States */
@@ -459,7 +459,7 @@
   width: 50px;
   height: 50px;
   border: 4px solid #e2e8f0;
-  border-top: 4px solid #3b82f6;
+  border-top: 4px solid #1e4d8c;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -551,20 +551,20 @@
 }
 
 .page-btn:hover:not(:disabled) {
-  border-color: #3B82F6;
-  color: #3B82F6;
+  border-color: #1e4d8c;
+  color: #1e4d8c;
   background: #eff6ff;
 }
 
 .page-btn--active {
-  background: linear-gradient(135deg, #3B82F6, #2563EB);
-  border-color: #2563EB;
+  background: linear-gradient(135deg, #1e4d8c, #0f2a4a);
+  border-color: #0f2a4a;
   color: #fff;
-  box-shadow: 0 3px 8px rgba(59, 130, 246, 0.35);
+  box-shadow: 0 3px 8px rgba(30, 77, 140, 0.35);
 }
 
 .page-btn--active:hover {
-  background: linear-gradient(135deg, #2563EB, #1d4ed8);
+  background: linear-gradient(135deg, #0f2a4a, #0a192f);
   color: #fff;
 }
 
