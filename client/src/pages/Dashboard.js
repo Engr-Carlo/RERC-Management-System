@@ -38,6 +38,25 @@ const Dashboard = () => {
     (app) => getFieldValue(app, 'Remarks', 'REMARKS', 'remarks'),
     [getFieldValue]
   );
+  const hasReviewComment = useCallback((app) => {
+    const remarks = String(getRemarksValue(app) || '').trim();
+    const comments = String(getCommentsValue(app) || '').trim();
+    return Boolean(remarks || comments);
+  }, [getCommentsValue, getRemarksValue]);
+  const isApprovedStatus = useCallback((status) => {
+    const s = String(status || '').toLowerCase();
+    return s.includes('approved') || s.includes('completed') || s.includes('complied') || s.includes('complete') || s.includes('clearance release') || s.includes('clearance');
+  }, []);
+  const isRevisionStatus = useCallback((status) => {
+    const s = String(status || '').toLowerCase();
+    return s.includes('resubmission') || s.includes('declined') || s.includes('reject') || s.includes('revision') || s.includes('review results forwarded via email') || s.includes('needs revision');
+  }, []);
+  const getEffectiveStatus = useCallback((app) => {
+    const status = String(getStatusValue(app) || '').trim();
+    if (status) return status;
+    if (hasReviewComment(app)) return 'For Resubmission';
+    return 'Pending';
+  }, [getStatusValue, hasReviewComment]);
   const getSubmissionTimestamp = useCallback((app) => app?.Timestamp || app?.Date || '', []);
 
   const fetchApplications = useCallback(async () => {
@@ -57,18 +76,29 @@ const Dashboard = () => {
   const filterApplications = useCallback(() => {
     let filtered = applications;
 
-    // This SY, remarks are optional and comments alone count as a review.
-    // When not viewing "all", keep only applications that are still pending review.
     if (statusFilter !== 'all') {
       filtered = filtered.filter(app => {
-        const remarks = getRemarksValue(app);
-        const comments = getCommentsValue(app);
         const status = getStatusValue(app);
-        return !status.trim() && !(remarks.trim() || comments.trim());
+        const statusLower = String(status || '').toLowerCase();
+        const statusEmpty = !status.trim();
+        const commentExists = hasReviewComment(app);
+
+        if (statusFilter === 'pending') {
+          return statusEmpty && !commentExists && !isApprovedStatus(status) && !isRevisionStatus(status);
+        }
+
+        if (statusFilter === 'approved') {
+          return isApprovedStatus(status) || (statusLower.includes('complied') && !commentExists);
+        }
+
+        if (statusFilter === 'needs revision') {
+          return isRevisionStatus(status) || (commentExists && !isApprovedStatus(status));
+        }
+
+        return false;
       });
     }
 
-    // Filter by search term
     if (searchTerm) {
       filtered = filtered.filter(app =>
         Object.values(app).some(value =>
@@ -77,27 +107,8 @@ const Dashboard = () => {
       );
     }
 
-    // Filter by status
-    if (statusFilter !== 'all') {
-      filtered = filtered.filter(app => {
-        const status = getStatusValue(app);
-        const statusLower = status.toLowerCase();
-
-        // Map filter values to actual Google Sheet status values
-        if (statusFilter === 'pending') {
-          return statusLower.includes('pending') || status === '';
-        } else if (statusFilter === 'approved') {
-          return statusLower.includes('completed');
-        } else if (statusFilter === 'needs revision') {
-          return statusLower.includes('review results forwarded via email');
-        }
-
-        return false;
-      });
-    }
-
     setFilteredApplications(filtered);
-  }, [applications, getCommentsValue, getRemarksValue, getStatusValue, searchTerm, statusFilter]);
+  }, [applications, hasReviewComment, isApprovedStatus, isRevisionStatus, getStatusValue, searchTerm, statusFilter]);
 
   useEffect(() => {
     fetchApplications();
@@ -127,18 +138,19 @@ const Dashboard = () => {
     const total = applications.length;
     const pending = applications.filter(app => {
       const status = getStatusValue(app);
-      return status === '' || status.toLowerCase().includes('pending');
+      const statusLower = String(status || '').toLowerCase();
+      return (!status.trim() && !hasReviewComment(app)) || statusLower.includes('pending') || statusLower.includes('for review') || statusLower.includes('under review');
     }).length;
     const approved = applications.filter(app => {
       const status = getStatusValue(app);
-      return status.toLowerCase().includes('completed');
+      return isApprovedStatus(status);
     }).length;
     const needsRevision = applications.filter(app => {
       const status = getStatusValue(app);
-      return status.toLowerCase().includes('review results forwarded');
+      return isRevisionStatus(status) || (hasReviewComment(app) && !isApprovedStatus(status));
     }).length;
     return { total, pending, approved, needsRevision };
-  }, [applications, getStatusValue]);
+  }, [applications, getStatusValue, hasReviewComment, isApprovedStatus, isRevisionStatus]);
 
   const getMonthlyData = useMemo(() => {
     const monthCounts = {};
@@ -462,7 +474,7 @@ const Dashboard = () => {
                     <td>{truncateText(app['College'])}</td>
                     <td>{truncateText(app['Program'])}</td>
                     <td className="rerc-code-cell">{truncateText(displayRercCode, 30)}</td>
-                    <td>{getStatusBadge(app['Research Ethics Clearance Application Status'])}</td>
+                    <td>{getStatusBadge(getEffectiveStatus(app))}</td>
                     <td>
                       <button
                         className="view-button"

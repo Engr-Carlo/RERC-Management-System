@@ -11,7 +11,7 @@ const StatusBadge = ({ status }) => {
     return <span className="status-badge status-pending">Pending</span>;
   }
 
-  const s = status.toLowerCase();
+  const s = String(status).toLowerCase();
 
   if (
     s.includes('approved by the head') ||
@@ -22,11 +22,23 @@ const StatusBadge = ({ status }) => {
     return <span className="status-badge status-head-approved">Head Approved</span>;
   }
 
-  if (s.includes('approved') || s.includes('completed') || s.includes('clearance')) {
+  if (
+    s.includes('approved') ||
+    s.includes('completed') ||
+    s.includes('complied') ||
+    s.includes('complete') ||
+    s.includes('clearance')
+  ) {
     return <span className="status-badge status-approved">Approved</span>;
   }
 
-  if (s.includes('resubmission') || s.includes('reject') || s.includes('declined') || s.includes('revision')) {
+  if (
+    s.includes('resubmission') ||
+    s.includes('reject') ||
+    s.includes('declined') ||
+    s.includes('revision') ||
+    s.includes('review results forwarded via email')
+  ) {
     return <span className="status-badge status-rejected">Needs Revision</span>;
   }
 
